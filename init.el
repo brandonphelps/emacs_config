@@ -1,3 +1,5 @@
+
+
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
@@ -15,10 +17,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(auth-source-save-behavior nil)
  '(custom-enabled-themes (quote (deeper-blue)))
+ '(org-agenda-files
+   (quote
+    ("~/agenda/emacs_learning.org" "~/agenda/food/food_to_try.org" "~/agenda/food/recipes.org" "~/agenda/car.org" "~/agenda/projects/westinsfriendsgame.org" "~/agenda/projects/gw2api.org" "~/agenda/video_games/league_of_legends.org" "~/agenda/refile.org")))
  '(package-selected-packages
    (quote
-    (ggtags helm-etags-plus helm helm-ag smart-tabs-mode neotree cmake-ide rust-mode yaml-mode magit lua-mode org-journal org-kanban))))
+    (tramp ggtags smart-tabs-mode neotree cmake-ide rust-mode yaml-mode magit lua-mode org-journal org-kanban))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -26,6 +32,8 @@
  ;; If there is more than one, they won't work right.
  )
 
+
+;; agenda stuff
 
 (ido-mode t)
 
