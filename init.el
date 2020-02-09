@@ -27,6 +27,8 @@
  )
 
 
+(ido-mode t)
+
 ;; (setq c-default-style "bsd")
 ;; (setq-default c-basic-offset 2)
 ;; (c-set-offset 'case-label '+)
