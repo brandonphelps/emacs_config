@@ -37,6 +37,10 @@
 
 (ido-mode t)
 
+;; programming stuff
+
+(smart-tabs-insinuate 'c 'c++ 'python)
+
 ;; (setq c-default-style "bsd")
 ;; (setq-default c-basic-offset 2)
 ;; (c-set-offset 'case-label '+)
@@ -44,19 +48,17 @@
 
 ;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
-;; (defun my-c-mode-hook ()
-;;   (setq tab-width 2)
-;;   (helm-mode 1)
-;;   (ggtags-mode 1)
-;;   )
-;; (add-hook 'c++-mode-hook 'my-c-mode-hook)
+(defun my-c-mode-hook ()
+  (setq tab-width 2)
+  )
+(add-hook 'c++-mode-hook 'my-c-mode-hook)
 
 ;; (global-set-key (kbd "C-c i") 'windmove-up)
 ;; (global-set-key (kbd "C-c k") 'windmove-down)
 ;; (global-set-key (kbd "C-c j") 'windmove-left)
 ;; (global-set-key (kbd "C-c l") 'windmove-right)
 
-;; (smart-tabs-insinuate 'c 'c++ 'python)
+
 
 ;; (defun my-create-tags-if-needed (SRC-DIR &optional FORCE)
 ;;   "return the full path of tags file"
