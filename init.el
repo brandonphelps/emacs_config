@@ -1,4 +1,8 @@
 
+(add-to-list 'load-path "~/.emacs.d/conan_building")
+
+(require 'conan)
+
 
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
@@ -24,7 +28,10 @@
     ("~/agenda/emacs_learning.org" "~/agenda/food/food_to_try.org" "~/agenda/food/recipes.org" "~/agenda/car.org" "~/agenda/projects/westinsfriendsgame.org" "~/agenda/projects/gw2api.org" "~/agenda/video_games/league_of_legends.org" "~/agenda/refile.org")))
  '(package-selected-packages
    (quote
-    (tramp ggtags smart-tabs-mode neotree cmake-ide rust-mode yaml-mode magit lua-mode org-journal org-kanban))))
+    (tramp ggtags smart-tabs-mode neotree cmake-ide rust-mode yaml-mode magit lua-mode org-journal org-kanban)))
+ '(tramp-remote-process-environment
+   (quote
+    ("ENV=''" "TMOUT=0" "LC_CTYPE=''" "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER=cat" "autocorrect=" "correct="))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -39,7 +46,21 @@
 
 ;; programming stuff
 
+;; remote stuff
+(add-to-list 'tramp-remote-path "~/.local/bin")
+
 (smart-tabs-insinuate 'c 'c++ 'python)
+
+
+;; compliation mode coloring 
+
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region compilation-filter-start (point))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
 
 ;; (setq c-default-style "bsd")
 ;; (setq-default c-basic-offset 2)
