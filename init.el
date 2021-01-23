@@ -44,8 +44,6 @@
 ;; (add-hook 'c-mode-hook 'eglot-ensure)
 ;; (add-hook 'c++-mode-hook 'eglot-ensure)
 
-
-
 (setq org-agenda-files
       '("~/agenda/money.org" "~/agenda/video_games/league_of_legends.org" "~/agenda/projects/emacs_hacking.org" "~/agenda/japanese/wanikani.org" "~/agenda/emacs_learning.org" "~/agenda/food/food_to_try.org" "~/agenda/food/recipes.org" "~/agenda/car.org" "~/agenda/projects/westinsfriendsgame.org" "~/agenda/projects/gw2api.org" "~/agenda/refile.org"))
 
@@ -174,13 +172,6 @@
 
 
 
-
-(with-eval-after-load 'magit
-  (require 'forge))
-
-
-(setq a (executable-find "echo"))
-(shell-command-to-string (concat a " wakka wakka"))
 
 
 
