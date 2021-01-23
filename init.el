@@ -1,22 +1,49 @@
+
+(setq custom-file "~/.emacs.d/custom.el")
+
 (require 'package)
 (add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
-(package-install 'use-package)
 
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package t))
 
-(setq use-package-verbose t)
-(setq use-package-always-ensure t)
+(setq-default use-package-verbose t)
+(setq-default use-package-always-ensure t)
 
 ;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode eglot cargo racer tramp ggtags smart-tabs-mode neotree rust-mode yaml-mode magit lua-mode org-journal org-kanban))
 
 
 (use-package quelpa
   :ensure t)
-(use-package quelpa-use-package)
-(use-package company)
-(use-package eglot)
+(use-package quelpa-use-package
+  :ensure t)
+(use-package company
+  :ensure t)
 
-(use-package winner)
+;; eglot
+(use-package eglot
+  :ensure t)
+
+;; eglot c / c++ 
+
+;; bootup report helper functions. 
+(defun bootup/message (msg)
+  (with-current-buffer (get-buffer-create "*bootup-report*")
+    (end-of-buffer)
+    (insert (concat msg "\n"))))
+
+(if (executable-find "clangd")
+    (bootup/message "Successfully found clangd")
+  (bootup/message "Failed to find clangd"))
+
+
+
+;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+;; (add-hook 'c-mode-hook 'eglot-ensure)
+;; (add-hook 'c++-mode-hook 'eglot-ensure)
+
 
 
 (setq org-agenda-files
@@ -145,15 +172,8 @@
 ;; (ggtags-mode 1)
 
 
-(if (executable-find "clangd+")
-    (message "found clangd installed")
-  (message "failed to find clangd"))
 
 
-(require 'eglot)
-(add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-(add-hook 'c-mode-hook 'eglot-ensure)
-(add-hook 'c++-mode-hook 'eglot-ensure)
 
 (with-eval-after-load 'magit
   (require 'forge))
@@ -162,24 +182,5 @@
 (setq a (executable-find "echo"))
 (shell-command-to-string (concat a " wakka wakka"))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(auth-source-save-behavior nil)
- '(c-offsets-alist '((substatement-open . +) (case-label . 0)))
- '(custom-enabled-themes '(deeper-blue))
- '(org-agenda-files
-   '("~/agenda/money.org" "~/agenda/video_games/league_of_legends.org" "~/agenda/projects/emacs_hacking.org" "~/agenda/japanese/wanikani.org" "~/agenda/emacs_learning.org" "~/agenda/food/food_to_try.org" "~/agenda/food/recipes.org" "~/agenda/car.org" "~/agenda/projects/westinsfriendsgame.org" "~/agenda/projects/gw2api.org" "~/agenda/refile.org") t)
- '(package-selected-packages
-   '(utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode eglot company cargo racer tramp ggtags smart-tabs-mode neotree rust-mode yaml-mode magit lua-mode org-journal org-kanban))
- '(send-mail-function 'mailclient-send-it)
- '(tramp-remote-process-environment
-   '("ENV=''" "TMOUT=0" "LC_CTYPE=''" "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER=cat" "autocorrect=" "correct=")))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+
