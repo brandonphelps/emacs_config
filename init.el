@@ -1,61 +1,63 @@
-
-(add-to-list 'load-path "~/.emacs.d/conan_building")
-
-(require 'conan)
-
-
 (require 'package)
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
-       (proto (if no-ssl "http" "https")))
-  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
-  ;;(add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
-  (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
+(package-install 'use-package)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(auth-source-save-behavior nil)
- '(custom-enabled-themes (quote (deeper-blue)))
- '(org-agenda-files
-   (quote
-    ("~/agenda/video_games/league_of_legends.org" "~/agenda/projects/emacs_hacking.org" "~/agenda/japanese/wanikani.org" "~/agenda/emacs_learning.org" "~/agenda/food/food_to_try.org" "~/agenda/food/recipes.org" "~/agenda/car.org" "~/agenda/projects/westinsfriendsgame.org" "~/agenda/projects/gw2api.org" "~/agenda/refile.org")))
- '(package-selected-packages
-   (quote
-    (tramp ggtags smart-tabs-mode neotree cmake-ide rust-mode yaml-mode magit lua-mode org-journal org-kanban)))
- '(send-mail-function (quote mailclient-send-it))
- '(tramp-remote-process-environment
-   (quote
-    ("ENV=''" "TMOUT=0" "LC_CTYPE=''" "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER=cat" "autocorrect=" "correct="))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
 
+(setq use-package-verbose t)
+(setq use-package-always-ensure t)
+
+;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode eglot cargo racer tramp ggtags smart-tabs-mode neotree rust-mode yaml-mode magit lua-mode org-journal org-kanban))
+
+
+(use-package quelpa
+  :ensure t)
+(use-package quelpa-use-package)
+(use-package company)
+(use-package eglot)
+
+(use-package winner)
+
+
+(setq org-agenda-files
+      '("~/agenda/money.org" "~/agenda/video_games/league_of_legends.org" "~/agenda/projects/emacs_hacking.org" "~/agenda/japanese/wanikani.org" "~/agenda/emacs_learning.org" "~/agenda/food/food_to_try.org" "~/agenda/food/recipes.org" "~/agenda/car.org" "~/agenda/projects/westinsfriendsgame.org" "~/agenda/projects/gw2api.org" "~/agenda/refile.org"))
+
+(load-theme 'deeper-blue)
+
+;; (custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(auth-source-save-behavior nil)
+;;  '(c-offsets-alist '((substatement-open . +) (case-label . 0)))
+;;  '(custom-enabled-themes '(deeper-blue))
+;;  '(send-mail-function 'mailclient-send-it)
+;;  '(tramp-remote-process-environment
+;;    '("ENV=''" "TMOUT=0" "LC_CTYPE=''" "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER=cat" "autocorrect=" "correct=")))
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  )
+
+
+;; (require 'conan)
 
 ;; agenda stuff
 
 (global-set-key (kbd "<f12>") 'org-agenda)
+(setq org-fast-tag-selection-include-todo nil)
 
 
 (ido-mode t)
 
 ;; programming stuff
 
-;; remote stuff
-(require 'tramp)
-(add-to-list 'tramp-remote-path "~/.local/bin")
+(tool-bar-mode -1)
 
 (smart-tabs-insinuate 'c 'c++ 'python)
-
 
 
 ;; compliation mode coloring 
@@ -143,3 +145,41 @@
 ;; (ggtags-mode 1)
 
 
+(if (executable-find "clangd+")
+    (message "found clangd installed")
+  (message "failed to find clangd"))
+
+
+(require 'eglot)
+(add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+(add-hook 'c-mode-hook 'eglot-ensure)
+(add-hook 'c++-mode-hook 'eglot-ensure)
+
+(with-eval-after-load 'magit
+  (require 'forge))
+
+
+(setq a (executable-find "echo"))
+(shell-command-to-string (concat a " wakka wakka"))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(auth-source-save-behavior nil)
+ '(c-offsets-alist '((substatement-open . +) (case-label . 0)))
+ '(custom-enabled-themes '(deeper-blue))
+ '(org-agenda-files
+   '("~/agenda/money.org" "~/agenda/video_games/league_of_legends.org" "~/agenda/projects/emacs_hacking.org" "~/agenda/japanese/wanikani.org" "~/agenda/emacs_learning.org" "~/agenda/food/food_to_try.org" "~/agenda/food/recipes.org" "~/agenda/car.org" "~/agenda/projects/westinsfriendsgame.org" "~/agenda/projects/gw2api.org" "~/agenda/refile.org") t)
+ '(package-selected-packages
+   '(utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode eglot company cargo racer tramp ggtags smart-tabs-mode neotree rust-mode yaml-mode magit lua-mode org-journal org-kanban))
+ '(send-mail-function 'mailclient-send-it)
+ '(tramp-remote-process-environment
+   '("ENV=''" "TMOUT=0" "LC_CTYPE=''" "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER=cat" "autocorrect=" "correct=")))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
