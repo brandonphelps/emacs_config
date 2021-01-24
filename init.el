@@ -1,8 +1,17 @@
 
+;; doesn't seem to contain the messages that are added to it. 
+;; (setq initial-buffer-choice "*bootup-report*")
+;; bootup report helper functions. 
+(defun bootup/message (msg)
+  (with-current-buffer (get-buffer-create "*bootup-report*")
+    (end-of-buffer)
+    (insert (concat msg "\n"))))
+
+
 (setq custom-file "~/.emacs.d/custom.el")
 
 (require 'package)
-(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa-stable" . "https://melpa.org/packages/") t)
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -22,21 +31,54 @@
 (use-package company
   :ensure t)
 
+(use-package smart-tabs-mode
+  :ensure t)
+
+(use-package magit
+  :ensure t)
+
+(use-package forge
+  :after magit)
+
+
 ;; eglot
 (use-package eglot
   :ensure t)
 
 ;; eglot c / c++ 
 
-;; bootup report helper functions. 
-(defun bootup/message (msg)
-  (with-current-buffer (get-buffer-create "*bootup-report*")
-    (end-of-buffer)
-    (insert (concat msg "\n"))))
+;; (ghub-request "GET" "/user" nil
+;; 	      :forge 'github
+;; 	      :host "api.github.com"
+;; 	      :username "brandonphelps"
+;; 	      :auth 'forge)
+
+
 
 (if (executable-find "clangd")
     (bootup/message "Successfully found clangd")
   (bootup/message "Failed to find clangd"))
+
+
+;; Rust handling. 
+(if (executable-find "rustup")
+    (bootup/message "Succesfully found rustup")
+  ;;(setq components (shell-command-to-string "rustup component list")))
+  (bootup/message "Failed to find rustup"))
+
+(if (executable-find "cargo")
+    (bootup/message "Succesfully found cargo")
+  (bootup/message "Failed to find cargo"))
+
+;; Todo; check if rustup components are installed.
+;; rls needs , rls, rust-src rust-analysis 
+
+
+
+
+
+(use-package forge
+  :ensure t)
 
 
 
