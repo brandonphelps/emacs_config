@@ -63,23 +63,19 @@
 ;; tabs and spaces formatting. 
 
 
-(setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
-(setq-default indent-tabs-mode nil)
+
 (add-to-list 'load-path "~/.emacs.d/py_jira")
 
 (require 'py_jira)
 
 
+;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode racer tramp  neotree rust-mode yaml-mode magit lua-mode))
+;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
+(use-package helm :ensure t)
+(use-package cmake-mode)
+(use-package markdown-mode)
+(use-package lua-mode)
 
-
-
-
-;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode eglot cargo racer tramp ggtags smart-tabs-mode neotree rust-mode yaml-mode magit lua-mode org-journal org-kanban))
-
-(use-package quelpa
-  :ensure t)
-(use-package quelpa-use-package
-  :ensure t)
 (use-package company
   :ensure t)
 
@@ -187,15 +183,16 @@
 ;; (c-set-offset 'case-label '+)
 ;; (ido-mode t)
 
-;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
+(setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 (defun my-c-mode-hook ()
   (setq c-basic-offset 2)
   (setq indent-tabs-mode t)
   (setq tab-width 2))
 
 (add-hook 'c-mode-hook 'my-c-mode-hook)
-
+(add-hook 'c++-mode-hook 'my-c-mode-hook)
 ;; mail server stuff
 (setq send-mail-function 'smtpmail-send-it
    message-send-mail-function 'smtpmail-send-it
@@ -212,48 +209,11 @@
    starttls-use-gnutls nil)
 
 
-;; example compose mail with filling out some stuff
-;; (compose-mail "bwp44f@mst.edu" "Food recipe" '(("From" . "zaszrules@gmail.com") ("" . "Hello World")))
-
-
 ;; (global-set-key (kbd "C-c i") 'windmove-up)
 ;; (global-set-key (kbd "C-c k") 'windmove-down)
 ;; (global-set-key (kbd "C-c j") 'windmove-left)
 ;; (global-set-key (kbd "C-c l") 'windmove-right)
 
-
-
-;; (defun my-create-tags-if-needed (SRC-DIR &optional FORCE)
-;;   "return the full path of tags file"
-;;   (let ((dir (file-name-as-directory (file-truename SRC-DIR)) )
-;;        file)
-;;     (setq file (concat dir "GTAGS"))
-;;     (setq new_dir (substring dir 0 (- (length dir) 2)))
-;;     (when (or FORCE (not (file-exists-p file)))
-;;       (message "Creating TAGS in %s ..." new_dir)
-;;       (message "ctags -f %s -e -R %s" file dir)
-;;       ;(shell-command
-;; 					;(format "ctags -f %s -e -R %s" file (substring (replace-regexp-in-string "/" "\\\\" new_dir))))
-;;       (ggtags-create-tags dir))
-;;   file))
-
-;; (my-create-tags-if-needed "C:\\Users\\Brandon\\Desktop\\cpp\\requests" 1)
-;; (my-create-tags-if-needed "C:\\Users\\Brandon\\Desktop\\cpp\\gw2api" 1)
-;; (setenv "GTAGSLIBPATH" "C:\\Users\\Brandon\\Desktop\\cpp\\requests")
-
-
-;; (defun my-update-tags ()
-;;   (interactive)
-;;   (dolist (tag tags-table-list)
-;;     (my-create-tags-if-needed (file-name-directory tag) t)))
-
-;; (setq tags-table-list '("c:/Users/Brandon/Desktop/cpp/requests/TAGS" "c:/Users/Brandon/.conan/data/libcurl/7.64.1/dev/testing/source/source_subfolder/TAGS"))
-
-
-;; (message "%s" (replace-regexp-in-string "/" "\\\\" "c:/Users/Brandon/Desktop/cpp/requests"))
-
-
-;; (ggtags-mode 1)
 
 
 
