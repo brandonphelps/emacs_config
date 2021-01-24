@@ -61,16 +61,8 @@
 (setq org-clock-into-drawer nil)
 
 ;; tabs and spaces formatting. 
-;; (smart-tabs-insinuate 'c 'c++)
 
-(defun my-c-mode-hook ()
-  (setq c-basic-offset 2)
-  (setq indent-tabs-mode t)
-  (setq tab-width 2))
 
-(add-hook 'c-mode-hook 'my-c-mode-hook)
-
-;; (add-hook 'c-mode-hook 'my-c-mode-hook)
 (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 (setq-default indent-tabs-mode nil)
 (add-to-list 'load-path "~/.emacs.d/py_jira")
@@ -114,11 +106,9 @@
 ;; 	      :auth 'forge)
 
 
-
 (if (executable-find "clangd")
     (bootup/message "Successfully found clangd")
   (bootup/message "Failed to find clangd"))
-
 
 ;; Rust handling. 
 (if (executable-find "rustup")
@@ -129,6 +119,11 @@
 (if (executable-find "cargo")
     (bootup/message "Succesfully found cargo")
   (bootup/message "Failed to find cargo"))
+
+(if (executable-find "python")
+    (bootup/message "Succesfully found python")
+  (bootup/message "Failed to find python"))
+    
 
 ;; Todo; check if rustup components are installed.
 ;; rls needs , rls, rust-src rust-analysis 
@@ -175,8 +170,7 @@
 
 (tool-bar-mode -1)
 
-(smart-tabs-insinuate 'c 'c++ 'python)
-
+;; (smart-tabs-insinuate 'c 'c++ 'python)
 
 ;; compliation mode coloring 
 
@@ -196,14 +190,13 @@
 ;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (defun my-c-mode-hook ()
-  (setq tab-width 2)
-  )
-(add-hook 'c++-mode-hook 'my-c-mode-hook)
+  (setq c-basic-offset 2)
+  (setq indent-tabs-mode t)
+  (setq tab-width 2))
 
+(add-hook 'c-mode-hook 'my-c-mode-hook)
 
 ;; mail server stuff
-
-
 (setq send-mail-function 'smtpmail-send-it
    message-send-mail-function 'smtpmail-send-it
    smtpmail-starttls-credentials
