@@ -71,6 +71,7 @@
 
 ;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode racer tramp  neotree rust-mode yaml-mode magit lua-mode))
 ;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
+(use-package impatient-mode :ensure t)
 (use-package helm :ensure t)
 (use-package cmake-mode)
 (use-package markdown-mode)
@@ -78,6 +79,8 @@
 
 (use-package company
   :ensure t)
+
+(use-package projectile)
 
 (use-package smart-tabs-mode
   :ensure t)
@@ -216,7 +219,32 @@
 
 
 
+(defun markdown-html (buffer)
+  (princ (with-current-buffer buffer
+    (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
+  (current-buffer)))
+
+;; agenda stuff
+
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "|" "DONE(d)" "OTHER(o)")))
+
+(setq org-todo-keyword-faces
+      '(("TODO" :foreground "red" :weight bold)
+	("DONE" :foreground "forest green" :weight bold)
+	("OTHER" :foreground "forest green" :weight bold)))
+
+;; todo: make this less os specific or something.
+(setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
 
 
+;; refile handling
 
+(setq org-refile-use-outline-path nil)
+(setq org-refile-targets '((org-agenda-files :maxlevel . 8)))
 
+;; remove clocked tasks with 0:00 duration
+(setq org-clock-out-remove-zero-time-clocks t)
+
+;;; httpd-start
+;;; httpd-serve-directory.
