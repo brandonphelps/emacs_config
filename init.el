@@ -1,5 +1,3 @@
-
-
 ;; doesn't seem to contain the messages that are added to it. 
 ;; (setq initial-buffer-choice "*bootup-report*")
 ;; bootup report helper functions. 
@@ -8,15 +6,16 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
-
 (setq custom-file "~/.emacs.d/custom.el")
 
 (require 'package)
-(add-to-list 'package-archives '("melpa-stable" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
+(unless package-archive-contents
+  (package-refresh-contents))
+
 (unless (package-installed-p 'use-package)
-  (package-refresh-contents)
   (package-install 'use-package t))
 
 (defun am_on_poxy ()
@@ -34,16 +33,80 @@
 
 
 (setq-default use-package-verbose t)
-(setq-default use-package-always-ensure t)
 
-;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode eglot cargo racer tramp ggtags smart-tabs-mode neotree rust-mode yaml-mode magit lua-mode org-journal org-kanban))
+(setq inhibit-startup-buffer-menu t)
+(setq inhibit-startup-screen t)
 
 (use-package rust-mode)
 
-(use-package quelpa
-  :ensure t)
-(use-package quelpa-use-package
-  :ensure t)
+;; basic UI setup. 
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(tooltip-mode -1)
+(set-fringe-mode 10)
+(menu-bar-mode -1)
+
+
+;; (custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(inhibit-startup-buffer-menu t)
+;;  '(inhibit-startup-screen t)
+;;  '
+;;  '(package-selected-packages
+;;    '(db-pg markdown-mode cmake-mode toml-mode magit helm python-mode yaml-mode)))
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  )
+
+
+;; agenda
+(global-set-key (kbd "<f12>") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+
+;; ;; should be conditional on machine
+(setq org-directory "~/AppData/Roaming/agenda")
+(setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
+
+
+;; clocking
+
+(setq org-log-done 'time)
+
+(setq org-clock-into-drawer nil)
+
+;; tabs and spaces formatting. 
+
+
+(add-to-list 'load-path "~/.emacs.d/py_jira")
+
+;; (require 'py_jira)
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+(use-package poetry)
+(use-package ivy
+  :diminish
+  :config
+  (ivy-mode 1))
+
+
+(use-package command-log-mode)
+
+;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode racer tramp  neotree rust-mode yaml-mode magit lua-mode))
+;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
+(use-package impatient-mode :ensure t)
+(use-package helm :ensure t)
+(use-package cmake-mode)
+(use-package markdown-mode)
+(use-package lua-mode)
+
 (use-package company
   :ensure t)
 
@@ -70,11 +133,9 @@
 ;; 	      :auth 'forge)
 
 
-
 (if (executable-find "clangd")
     (bootup/message "Successfully found clangd")
   (bootup/message "Failed to find clangd"))
-
 
 ;; Rust handling. 
 (if (executable-find "rustup")
@@ -86,26 +147,25 @@
     (bootup/message "Succesfully found cargo")
   (bootup/message "Failed to find cargo"))
 
+(if (executable-find "python")
+    (bootup/message "Succesfully found python")
+  (bootup/message "Failed to find python"))
+    
+
 ;; Todo; check if rustup components are installed.
 ;; rls needs , rls, rust-src rust-analysis 
 
-
-
-
-
 (use-package forge
   :ensure t)
-
-
 
 ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
 ;; (add-hook 'c-mode-hook 'eglot-ensure)
 ;; (add-hook 'c++-mode-hook 'eglot-ensure)
 
-(setq org-agenda-files
-      '("~/agenda/money.org" "~/agenda/video_games/league_of_legends.org" "~/agenda/projects/emacs_hacking.org" "~/agenda/japanese/wanikani.org" "~/agenda/emacs_learning.org" "~/agenda/food/food_to_try.org" "~/agenda/food/recipes.org" "~/agenda/car.org" "~/agenda/projects/westinsfriendsgame.org" "~/agenda/projects/gw2api.org" "~/agenda/refile.org"))
-
 (load-theme 'deeper-blue)
+(load-theme 'tango-dark)
+(set-face-attribute 'default nil :font "Fire Code Retina" :height 280)
+
 
 ;; (custom-set-variables
 ;;  ;; custom-set-variables was added by Custom.
@@ -140,8 +200,7 @@
 
 (tool-bar-mode -1)
 
-(smart-tabs-insinuate 'c 'c++ 'python)
-
+;; (smart-tabs-insinuate 'c 'c++ 'python)
 
 ;; compliation mode coloring 
 
@@ -158,17 +217,17 @@
 ;; (c-set-offset 'case-label '+)
 ;; (ido-mode t)
 
-;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
+(setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 (defun my-c-mode-hook ()
-  (setq tab-width 2)
-  )
+  (setq c-basic-offset 2)
+  (setq indent-tabs-mode t)
+  (setq tab-width 2))
+
+(add-hook 'c-mode-hook 'my-c-mode-hook)
 (add-hook 'c++-mode-hook 'my-c-mode-hook)
-
-
 ;; mail server stuff
-
-
 (setq send-mail-function 'smtpmail-send-it
    message-send-mail-function 'smtpmail-send-it
    smtpmail-starttls-credentials
@@ -184,10 +243,6 @@
    starttls-use-gnutls nil)
 
 
-;; example compose mail with filling out some stuff
-;; (compose-mail "bwp44f@mst.edu" "Food recipe" '(("From" . "zaszrules@gmail.com") ("" . "Hello World")))
-
-
 ;; (global-set-key (kbd "C-c i") 'windmove-up)
 ;; (global-set-key (kbd "C-c k") 'windmove-down)
 ;; (global-set-key (kbd "C-c j") 'windmove-left)
@@ -195,39 +250,23 @@
 
 
 
-;; (defun my-create-tags-if-needed (SRC-DIR &optional FORCE)
-;;   "return the full path of tags file"
-;;   (let ((dir (file-name-as-directory (file-truename SRC-DIR)) )
-;;        file)
-;;     (setq file (concat dir "GTAGS"))
-;;     (setq new_dir (substring dir 0 (- (length dir) 2)))
-;;     (when (or FORCE (not (file-exists-p file)))
-;;       (message "Creating TAGS in %s ..." new_dir)
-;;       (message "ctags -f %s -e -R %s" file dir)
-;;       ;(shell-command
-;; 					;(format "ctags -f %s -e -R %s" file (substring (replace-regexp-in-string "/" "\\\\" new_dir))))
-;;       (ggtags-create-tags dir))
-;;   file))
+(defun markdown-html (buffer)
+  (princ (with-current-buffer buffer
+    (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
+  (current-buffer)))
 
-;; (my-create-tags-if-needed "C:\\Users\\Brandon\\Desktop\\cpp\\requests" 1)
-;; (my-create-tags-if-needed "C:\\Users\\Brandon\\Desktop\\cpp\\gw2api" 1)
-;; (setenv "GTAGSLIBPATH" "C:\\Users\\Brandon\\Desktop\\cpp\\requests")
+;; agenda stuff
 
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "|" "DONE(d)" "OTHER(o)")))
 
-;; (defun my-update-tags ()
-;;   (interactive)
-;;   (dolist (tag tags-table-list)
-;;     (my-create-tags-if-needed (file-name-directory tag) t)))
+(setq org-todo-keyword-faces
+      '(("TODO" :foreground "red" :weight bold)
+	("DONE" :foreground "forest green" :weight bold)
+	("OTHER" :foreground "forest green" :weight bold)))
 
-;; (setq tags-table-list '("c:/Users/Brandon/Desktop/cpp/requests/TAGS" "c:/Users/Brandon/.conan/data/libcurl/7.64.1/dev/testing/source/source_subfolder/TAGS"))
-
-
-;; (message "%s" (replace-regexp-in-string "/" "\\\\" "c:/Users/Brandon/Desktop/cpp/requests"))
-
-
-;; (ggtags-mode 1)
-
-
+;; todo: make this less os specific or something.
+(setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
 
 ;; ;; Added by Package.el.  This must come before configurations of
 ;; ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -285,7 +324,7 @@
 
 ;; (require 'eglot)
 
-;; ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
 
 ;; (defun my-c++-mode-hook ()
 ;;   (setq c-basic-offset 2)
@@ -308,7 +347,15 @@
 ;;  '(inhibit-startup-screen t)
 ;;  '(package-selected-packages
 ;;    '(smart-tabs-mode db-pg markdown-mode cmake-mode toml-mode magit helm python-mode yaml-mode)))
+;; refile handling
 
+(setq org-refile-use-outline-path nil)
+(setq org-refile-targets '((org-agenda-files :maxlevel . 8)))
+
+;; remove clocked tasks with 0:00 duration
+(setq org-clock-out-remove-zero-time-clocks t)
 
 ;; (smart-tabs-insinuate 'c 'javascript)
 ;; >>>>>>> 0ab611b... linux init.el
+;;; httpd-start
+;;; httpd-serve-directory.
