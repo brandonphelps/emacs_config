@@ -100,8 +100,6 @@
 (use-package company
   :ensure t)
 
-(use-package projectile)
-
 (use-package smart-tabs-mode
   :ensure t)
 
