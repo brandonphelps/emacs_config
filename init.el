@@ -13,8 +13,10 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
+(unless package-archive-contents
+  (package-refresh-contents))
+
 (unless (package-installed-p 'use-package)
-  (package-refresh-contents)
   (package-install 'use-package t))
 
 (setq-default use-package-verbose t)
@@ -24,6 +26,12 @@
 (setq inhibit-startup-screen t)
 
 
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+(tooltip-mode -1)
+(set-fringe-mode 20)
+
+(menu-bar-mode -1)
 
 ;; (custom-set-variables
 ;;  ;; custom-set-variables was added by Custom.
@@ -47,12 +55,12 @@
 (global-set-key (kbd "<f12>") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 
-;; should be conditional on machine
-(setq org-directory "~/AppData/Roaming/agenda")
-(setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
+;; ;; should be conditional on machine
+;; (setq org-directory "~/AppData/Roaming/agenda")
+;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
 
-(setq org-agenda-files
-      '("~/AppData/Roaming/agenda/refile.org" "~/AppData/Roaming/agenda/projects.org" "~/AppData/Roaming/agenda/product_support.org" "~/AppData/Roaming/agenda/process_improvement.org" "~/AppData/Roaming/agenda/others.org" "~/AppData/Roaming/agenda/no_wip.org" "~/AppData/Roaming/agenda/notes.org" "~/AppData/Roaming/agenda/meetings.org" "~/AppData/Roaming/agenda/matlab.org" "~/AppData/Roaming/agenda/mab.org" "~/AppData/Roaming/agenda/lum.org" "~/AppData/Roaming/agenda/lpa.org" "~/AppData/Roaming/agenda/hed_target.org" "~/AppData/Roaming/agenda/altecu.org" "~/AppData/Roaming/agenda/axis_sim.org" "~/AppData/Roaming/agenda/cl455.org" "~/AppData/Roaming/agenda/code_review.org" "~/AppData/Roaming/agenda/contacts.org" "~/AppData/Roaming/agenda/email.org" "~/AppData/Roaming/agenda/exodus.org" "~/AppData/Roaming/agenda/genesis.org" "~/AppData/Roaming/agenda/reviews.org" "~/AppData/Roaming/agenda/simulink_builder.org" "~/AppData/Roaming/agenda/time_off.org" "~/AppData/Roaming/agenda/work.org"))
+;; (setq org-agenda-files
+;;       '("~/AppData/Roaming/agenda/refile.org" "~/AppData/Roaming/agenda/projects.org" "~/AppData/Roaming/agenda/product_support.org" "~/AppData/Roaming/agenda/process_improvement.org" "~/AppData/Roaming/agenda/others.org" "~/AppData/Roaming/agenda/no_wip.org" "~/AppData/Roaming/agenda/notes.org" "~/AppData/Roaming/agenda/meetings.org" "~/AppData/Roaming/agenda/matlab.org" "~/AppData/Roaming/agenda/mab.org" "~/AppData/Roaming/agenda/lum.org" "~/AppData/Roaming/agenda/lpa.org" "~/AppData/Roaming/agenda/hed_target.org" "~/AppData/Roaming/agenda/altecu.org" "~/AppData/Roaming/agenda/axis_sim.org" "~/AppData/Roaming/agenda/cl455.org" "~/AppData/Roaming/agenda/code_review.org" "~/AppData/Roaming/agenda/contacts.org" "~/AppData/Roaming/agenda/email.org" "~/AppData/Roaming/agenda/exodus.org" "~/AppData/Roaming/agenda/genesis.org" "~/AppData/Roaming/agenda/reviews.org" "~/AppData/Roaming/agenda/simulink_builder.org" "~/AppData/Roaming/agenda/time_off.org" "~/AppData/Roaming/agenda/work.org"))
 
 ;; clocking
 
@@ -66,8 +74,9 @@
 
 (add-to-list 'load-path "~/.emacs.d/py_jira")
 
-(require 'py_jira)
+;; (require 'py_jira)
 
+(use-package poetry)
 
 ;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode racer tramp  neotree rust-mode yaml-mode magit lua-mode))
 ;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
@@ -132,6 +141,9 @@
 ;; (add-hook 'c++-mode-hook 'eglot-ensure)
 
 (load-theme 'deeper-blue)
+(load-theme 'tango-dark)
+(set-face-attribute 'default nil :font "Fire Code Retina" :height 280)
+
 
 ;; (custom-set-variables
 ;;  ;; custom-set-variables was added by Custom.
