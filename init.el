@@ -20,18 +20,20 @@
   (package-install 'use-package t))
 
 (setq-default use-package-verbose t)
-(setq-default use-package-always-ensure t)
 
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
 
 
+;; basic UI setup. 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
-(set-fringe-mode 20)
+(set-fringe-mode 10)
 
 (menu-bar-mode -1)
+
+
 
 ;; (custom-set-variables
 ;;  ;; custom-set-variables was added by Custom.
@@ -71,12 +73,21 @@
 ;; tabs and spaces formatting. 
 
 
-
 (add-to-list 'load-path "~/.emacs.d/py_jira")
 
 ;; (require 'py_jira)
 
+(require 'use-package)
+(setq use-package-always-ensure t)
+
 (use-package poetry)
+(use-package ivy
+  :diminish
+  :config
+  (ivy-mode 1))
+
+
+(use-package command-log-mode)
 
 ;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode racer tramp  neotree rust-mode yaml-mode magit lua-mode))
 ;; todo: define a minimum set of useful packages and an extended to reduce startup time. 

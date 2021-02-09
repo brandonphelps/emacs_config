@@ -1,4 +1,14 @@
 
+bookmarks
+custom.el
+doctor.el
+forge-database.sqlite
+forge/
+ido.last
+mail/
+network-security.data
+org-graph-view/
+
 elpa/*
 eshell/*
 auto-save-list/*
