@@ -6,7 +6,6 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
-
 (setq custom-file "~/.emacs.d/custom.el")
 
 (require 'package)
@@ -30,9 +29,7 @@
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (set-fringe-mode 10)
-
 (menu-bar-mode -1)
-
 
 
 ;; (custom-set-variables
@@ -58,11 +55,9 @@
 (global-set-key (kbd "C-c c") 'org-capture)
 
 ;; ;; should be conditional on machine
-;; (setq org-directory "~/AppData/Roaming/agenda")
-;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
+(setq org-directory "~/AppData/Roaming/agenda")
+(setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
 
-;; (setq org-agenda-files
-;;       '("~/AppData/Roaming/agenda/refile.org" "~/AppData/Roaming/agenda/projects.org" "~/AppData/Roaming/agenda/product_support.org" "~/AppData/Roaming/agenda/process_improvement.org" "~/AppData/Roaming/agenda/others.org" "~/AppData/Roaming/agenda/no_wip.org" "~/AppData/Roaming/agenda/notes.org" "~/AppData/Roaming/agenda/meetings.org" "~/AppData/Roaming/agenda/matlab.org" "~/AppData/Roaming/agenda/mab.org" "~/AppData/Roaming/agenda/lum.org" "~/AppData/Roaming/agenda/lpa.org" "~/AppData/Roaming/agenda/hed_target.org" "~/AppData/Roaming/agenda/altecu.org" "~/AppData/Roaming/agenda/axis_sim.org" "~/AppData/Roaming/agenda/cl455.org" "~/AppData/Roaming/agenda/code_review.org" "~/AppData/Roaming/agenda/contacts.org" "~/AppData/Roaming/agenda/email.org" "~/AppData/Roaming/agenda/exodus.org" "~/AppData/Roaming/agenda/genesis.org" "~/AppData/Roaming/agenda/reviews.org" "~/AppData/Roaming/agenda/simulink_builder.org" "~/AppData/Roaming/agenda/time_off.org" "~/AppData/Roaming/agenda/work.org"))
 
 ;; clocking
 
