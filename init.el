@@ -20,10 +20,8 @@
   (package-install 'use-package t))
 
 (setq-default use-package-verbose t)
-
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
-
 
 ;; basic UI setup. 
 (scroll-bar-mode -1)
@@ -33,6 +31,8 @@
 
 (menu-bar-mode -1)
 
+(column-number-mode)
+(global-display-line-numbers-mode t)
 
 
 ;; (custom-set-variables
@@ -80,34 +80,29 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-(use-package poetry)
 (use-package ivy
   :diminish
   :config
   (ivy-mode 1))
 
-
-(use-package command-log-mode)
-
 ;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode racer tramp  neotree rust-mode yaml-mode magit lua-mode))
 ;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
-(use-package impatient-mode :ensure t)
-(use-package helm :ensure t)
+(use-package impatient-mode)
+(use-package helm)
+
+(use-package company)
+(use-package smart-tabs-mode)
+
+;; git related stuff.
+(use-package magit)
+(use-package forge
+  :after magit)
+
+
+;; languages
 (use-package cmake-mode)
 (use-package markdown-mode)
 (use-package lua-mode)
-
-(use-package company
-  :ensure t)
-
-(use-package smart-tabs-mode
-  :ensure t)
-
-(use-package magit
-  :ensure t)
-
-(use-package forge
-  :after magit)
 
 
 ;; eglot
@@ -122,6 +117,8 @@
 ;; 	      :username "brandonphelps"
 ;; 	      :auth 'forge)
 
+;; Todo; check if rustup components are installed.
+;; rls needs , rls, rust-src rust-analysis 
 
 (if (executable-find "clangd")
     (bootup/message "Successfully found clangd")
@@ -142,19 +139,15 @@
   (bootup/message "Failed to find python"))
     
 
-;; Todo; check if rustup components are installed.
-;; rls needs , rls, rust-src rust-analysis 
 
-(use-package forge
-  :ensure t)
+(use-package which-key)
 
 ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
 ;; (add-hook 'c-mode-hook 'eglot-ensure)
 ;; (add-hook 'c++-mode-hook 'eglot-ensure)
 
-(load-theme 'deeper-blue)
+;; (load-theme 'deeper-blue)
 (load-theme 'tango-dark)
-(set-face-attribute 'default nil :font "Fire Code Retina" :height 280)
 
 
 ;; (custom-set-variables
