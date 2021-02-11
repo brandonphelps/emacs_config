@@ -93,10 +93,6 @@
 (use-package company)
 (use-package smart-tabs-mode)
 
-;; git related stuff.
-(use-package magit)
-(use-package forge
-  :after magit)
 
 
 ;; languages
@@ -104,17 +100,29 @@
 (use-package markdown-mode)
 (use-package lua-mode)
 
-
-;; eglot
-(use-package eglot)
-
-;; eglot c / c++ 
+;; git related stuff.
+(use-package magit)
+(use-package forge
+  :after magit)
 
 ;; (ghub-request "GET" "/user" nil
 ;; 	      :forge 'github
 ;; 	      :host "api.github.com"
 ;; 	      :username "brandonphelps"
 ;; 	      :auth 'forge)
+
+
+
+;; eglot
+(use-package eglot)
+
+;; eglot c / c++ 
+
+
+
+;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+;; (add-hook 'c-mode-hook 'eglot-ensure)
+;; (add-hook 'c++-mode-hook 'eglot-ensure)
 
 ;; Todo; check if rustup components are installed.
 ;; rls needs , rls, rust-src rust-analysis 
@@ -149,9 +157,6 @@
 
 (use-package doom-themes)
 
-;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-;; (add-hook 'c-mode-hook 'eglot-ensure)
-;; (add-hook 'c++-mode-hook 'eglot-ensure)
 
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
@@ -185,11 +190,7 @@
 (setq org-fast-tag-selection-include-todo nil)
 
 
-(ido-mode t)
-
 ;; programming stuff
-
-(tool-bar-mode -1)
 
 ;; (smart-tabs-insinuate 'c 'c++ 'python)
 
