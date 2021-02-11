@@ -10,7 +10,7 @@
 (setq custom-file "~/.emacs.d/custom.el")
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
 (unless package-archive-contents
@@ -106,8 +106,7 @@
 
 
 ;; eglot
-(use-package eglot
-  :ensure t)
+(use-package eglot)
 
 ;; eglot c / c++ 
 
@@ -140,7 +139,15 @@
     
 
 
-(use-package which-key)
+
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+	 ("C-x b" . counsel-ibuffer)
+	 ("C-x C-f" . counsel-find-file)
+	 )
+  )
+
+(use-package doom-themes)
 
 ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
 ;; (add-hook 'c-mode-hook 'eglot-ensure)
