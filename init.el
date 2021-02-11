@@ -9,7 +9,7 @@
 (setq custom-file "~/.emacs.d/custom.el")
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
 (unless package-archive-contents
@@ -104,10 +104,6 @@
 (use-package company)
 (use-package smart-tabs-mode)
 
-;; git related stuff.
-(use-package magit)
-(use-package forge
-  :after magit)
 
 
 ;; languages
@@ -115,18 +111,27 @@
 (use-package markdown-mode)
 (use-package lua-mode)
 
-
-;; eglot
-(use-package eglot
-  :ensure t)
-
-;; eglot c / c++ 
+;; git related stuff.
+(use-package magit)
+(use-package forge
+  :after magit)
 
 ;; (ghub-request "GET" "/user" nil
 ;; 	      :forge 'github
 ;; 	      :host "api.github.com"
 ;; 	      :username "brandonphelps"
 ;; 	      :auth 'forge)
+
+
+
+;; eglot
+(use-package eglot)
+
+;; eglot c / c++ 
+
+;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+;; (add-hook 'c-mode-hook 'eglot-ensure)
+;; (add-hook 'c++-mode-hook 'eglot-ensure)
 
 ;; Todo; check if rustup components are installed.
 ;; rls needs , rls, rust-src rust-analysis 
@@ -148,37 +153,23 @@
 (if (executable-find "python")
     (bootup/message "Succesfully found python")
   (bootup/message "Failed to find python"))
-    
+
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+	 ("C-x b" . counsel-ibuffer)
+	 ("C-x C-f" . counsel-find-file)
+	 )
+  )
+
+(use-package doom-themes)
+
+
+;; (load-theme 'deeper-blue)
+;; (load-theme 'tango-dark)
+(load-theme 'doom-palenight)
 
 ;; doesn't work? 
 ;; (use-package which-key)
-
-;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-;; (add-hook 'c-mode-hook 'eglot-ensure)
-;; (add-hook 'c++-mode-hook 'eglot-ensure)
-
-;; (load-theme 'deeper-blue)
-(load-theme 'tango-dark)
-
-
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(auth-source-save-behavior nil)
-;;  '(c-offsets-alist '((substatement-open . +) (case-label . 0)))
-;;  '(custom-enabled-themes '(deeper-blue))
-;;  '(send-mail-function 'mailclient-send-it)
-;;  '(tramp-remote-process-environment
-;;    '("ENV=''" "TMOUT=0" "LC_CTYPE=''" "CDPATH=" "HISTORY=" "MAIL=" "MAILCHECK=" "MAILPATH=" "PAGER=cat" "autocorrect=" "correct=")))
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  )
-
 
 ;; (require 'conan)
 
@@ -188,23 +179,17 @@
 (setq org-fast-tag-selection-include-todo nil)
 
 
-(ido-mode t)
-
 ;; programming stuff
-
-(tool-bar-mode -1)
 
 ;; (smart-tabs-insinuate 'c 'c++ 'python)
 
 ;; compliation mode coloring 
-
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
   (toggle-read-only)
   (ansi-color-apply-on-region compilation-filter-start (point))
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
-
 
 ;; (setq c-default-style "bsd")
 ;; (setq-default c-basic-offset 2)
@@ -214,6 +199,7 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
+
 (defun my-c-mode-hook ()
   (setq c-basic-offset 2)
   (setq indent-tabs-mode t)
@@ -259,87 +245,10 @@
 	("DONE" :foreground "forest green" :weight bold)
 	("OTHER" :foreground "forest green" :weight bold)))
 
+
 ;; todo: make this less os specific or something.
 (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
 
-;; ;; Added by Package.el.  This must come before configurations of
-;; ;; installed packages.  Don't delete this line.  If you don't want it,
-;; ;; just comment it out by adding a semicolon to the start of the line.
-;; ;; You may delete these explanatory comments.
-;; (package-initialize)
-
-;; (add-to-list 'load-path "~/.emacs.d/elpa/yaml-mode")
-;; (add-to-list 'load-path "~/.emacs.d/elpa/cargo.el")
-;; (add-to-list 'load-path "~/.emacs.d/elpa/emacs-web-server")
-
-;; (require 'package)
-;; (add-to-list 'package-archives
-;;              '("melpa" . "http://melpa.org/packages/") t)
-
-;; (load-file "~/.emacs.d/elpa/rust-mode/rust-mode.el")
-;; (load-file "~/.emacs.d/elpa/markdown-mode/markdown-mode.el")
-;; (require 'markdown-mode)
-;; (load-file "~/.emacs.d/elpa/cargo.el/cargo.el")
-;; (load-file "~/.emacs.d/elpa/emacs-web-server/simple-httpd.el")
-
-
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(c-basic-offset (quote set-from-style))
-;;  '(c-offsets-alist (quote ((inline-open . 0) (substatement-open . 0))))
-;;  '(custom-enabled-themes (quote (tango)))
-;;  '(package-archives (quote (("melpa" . "http://melpa.org/packages/"))))
-;;  '(package-selected-packages (quote (eglot company web-mode helm magit))))
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  )
-
-
-;; (require 'yaml-mode)
-;; (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
-
-
-;; (defun my-c-mode-hook ()
-;;   (local-set-key (kbd "C-M-p") 'c-beginning-of-defun)
-;;   (local-set-key (kbd "C-M-n") 'c-end-of-defun)
-;;   (setq c-basic-offset 2)
-;;   (setq tab-width 2))
-
-;; (setq c-default-style '((java-mode . "linux")
-;; 			(awk-mode . "awk")
-;; 			(c-mode . "linux")
-;; 			(c++-mode . "linux")))
-
-;; (require 'eglot)
-
-;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-
-;; (defun my-c++-mode-hook ()
-;;   (setq c-basic-offset 2)
-;;   (setq tab-width 2))
-
-;; (add-hook 'c-mode-hook 'my-c-mode-hook)
-;; (add-hook 'c++-mode-hook 'my-c++-mode-hook)
-
-;; ;;(add-hook 'c-mode-hook 'eglot-ensure)
-;; ;;(add-hook 'c++-mode-hook 'eglot-ensure)
-
-
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(inhibit-startup-buffer-menu t)
-;;  '(inhibit-startup-screen t)
-;;  '(package-selected-packages
-;;    '(smart-tabs-mode db-pg markdown-mode cmake-mode toml-mode magit helm python-mode yaml-mode)))
 ;; refile handling
 
 (setq org-refile-use-outline-path nil)
