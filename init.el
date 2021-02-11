@@ -144,9 +144,6 @@
 (if (executable-find "python")
     (bootup/message "Succesfully found python")
   (bootup/message "Failed to find python"))
-    
-
-
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
@@ -195,14 +192,12 @@
 ;; (smart-tabs-insinuate 'c 'c++ 'python)
 
 ;; compliation mode coloring 
-
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
   (toggle-read-only)
   (ansi-color-apply-on-region compilation-filter-start (point))
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
-
 
 ;; (setq c-default-style "bsd")
 ;; (setq-default c-basic-offset 2)
@@ -212,6 +207,7 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
 (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
+
 (defun my-c-mode-hook ()
   (setq c-basic-offset 2)
   (setq indent-tabs-mode t)
@@ -257,9 +253,9 @@
 	("DONE" :foreground "forest green" :weight bold)
 	("OTHER" :foreground "forest green" :weight bold)))
 
+
 ;; todo: make this less os specific or something.
 (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
-
 
 ;; refile handling
 
@@ -271,3 +267,4 @@
 
 ;;; httpd-start
 ;;; httpd-serve-directory.
+
