@@ -154,7 +154,8 @@
 ;; (add-hook 'c++-mode-hook 'eglot-ensure)
 
 ;; (load-theme 'deeper-blue)
-(load-theme 'tango-dark)
+;; (load-theme 'tango-dark)
+(load-theme 'doom-palenight)
 
 
 ;; (custom-set-variables
