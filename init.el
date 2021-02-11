@@ -36,8 +36,6 @@
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
 
-(use-package rust-mode)
-
 ;; basic UI setup. 
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
@@ -90,6 +88,8 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+(use-package rust-mode)
 
 (use-package ivy
   :diminish
@@ -150,8 +150,8 @@
   (bootup/message "Failed to find python"))
     
 
-
-(use-package which-key)
+;; doesn't work? 
+;; (use-package which-key)
 
 ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
 ;; (add-hook 'c-mode-hook 'eglot-ensure)
@@ -349,6 +349,5 @@
 (setq org-clock-out-remove-zero-time-clocks t)
 
 ;; (smart-tabs-insinuate 'c 'javascript)
-;; >>>>>>> 0ab611b... linux init.el
 ;; httpd-start
 ;; httpd-serve-directory.
