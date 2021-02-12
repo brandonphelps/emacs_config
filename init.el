@@ -68,14 +68,12 @@
 ;;  ;; If there is more than one, they won't work right.
 ;;  )
 
-
-
-
-
 ;; tabs and spaces formatting. 
 
-
-(add-to-list 'load-path "~/.emacs.d/py_jira")
+(when (file-directory-p "py_jira")
+  (message "loading up py jira")
+  (add-to-list 'load-path "~/.emacs.d/py_jira")
+  (require 'py_jira))
 
 ;; (require 'py_jira)
 
@@ -241,7 +239,6 @@
   (current-buffer)))
 
 ;; agenda stuff
-
 (global-set-key (kbd "<f12>") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 
