@@ -121,12 +121,6 @@
 
 (use-package doom-themes)
 
-<<<<<<< Updated upstream
-=======
-(setq custom-safe-themes
-      '("c83c095dd01cde64b631fb0fe5980587deec3834dc55144a6e78ff91ebc80b19" default))
-
->>>>>>> Stashed changes
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
 (load-theme 'doom-palenight t)
@@ -136,6 +130,7 @@
 (setq ring-bell-function 'ignore)
 
 
+
 (use-package projectile
   :diminish
   :config (projectile-mode)
@@ -143,8 +138,8 @@
   :bind-keymap
   ("C-c p" . projectile-command-map)
   :init
-  (when (file-directory-p "~/Documents/Projects")
-    (setq projectile-project-search-path '("~/Projects/Code")))
+  (when (boundp 'bp-default-project-path)
+    (setq projectile-project-search-path '(bp-default-project-path)))
   (setq projectile-switch-project-action #'projectile-dired))
 
 
