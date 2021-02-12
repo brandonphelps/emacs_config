@@ -7,7 +7,9 @@
     (insert (concat msg "\n"))))
 
 (setq custom-file "~/.emacs.d/custom.el")
-(setq specific-config-filename (concat (file-name-as-directory "box-specifics") (downcase (system-name)) ".el"))
+(setq specific-config-filename
+      (concat
+       (file-name-as-directory "box-specifics") (downcase (system-name)) ".el"))
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -22,11 +24,6 @@
   (package-install 'use-package t))
 
 
-
-;; hmm load customizations late or early? 
-(when (file-readable-p specific-config-filename)
-  (message-box "unable to load specific machine file")
-  (load-file specific-config-filename))
 
 (setq-default use-package-verbose t)
 (setq inhibit-startup-buffer-menu t)
@@ -52,6 +49,10 @@
   :diminish
   :config
   (ivy-mode 1))
+
+;; hmm load user specifics customizations late or early? 
+(when (file-readable-p specific-config-filename)
+  (load-file specific-config-filename))
 
 ;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
 (use-package impatient-mode)
@@ -120,6 +121,12 @@
 
 (use-package doom-themes)
 
+<<<<<<< Updated upstream
+=======
+(setq custom-safe-themes
+      '("c83c095dd01cde64b631fb0fe5980587deec3834dc55144a6e78ff91ebc80b19" default))
+
+>>>>>>> Stashed changes
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
 (load-theme 'doom-palenight t)
@@ -236,8 +243,11 @@
 	("OTHER" :foreground "forest green" :weight bold)))
 
 
-;; refile handling
+(setq org-capture-templates
+      (quote (("t" "todo" entry (file org-default-notes-file)
+	       "* TODO %?\n" :clock-in t :clock-resume t))))
 
+;; refile handling
 (setq org-refile-use-outline-path nil)
 (setq org-refile-targets '((org-agenda-files :maxlevel . 8)))
 
