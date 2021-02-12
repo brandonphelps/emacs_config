@@ -159,8 +159,6 @@
     (bootup/message "Succesfully found python")
   (bootup/message "Failed to find python"))
 
-
-
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
 	 ("C-x b" . counsel-ibuffer)
