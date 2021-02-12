@@ -69,20 +69,8 @@
 ;;  )
 
 
-;; agenda
-(global-set-key (kbd "<f12>") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-
-;; ;; should be conditional on machine
-(setq org-directory "~/AppData/Roaming/agenda")
-(setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
 
 
-;; clocking
-
-(setq org-log-done 'time)
-
-(setq org-clock-into-drawer nil)
 
 ;; tabs and spaces formatting. 
 
@@ -197,13 +185,6 @@
   (setq which-key-idle-delay 1))
 ;; (require 'conan)
 
-;; agenda stuff
-
-(global-set-key (kbd "<f12>") 'org-agenda)
-(setq org-fast-tag-selection-include-todo nil)
-
-
-;; programming stuff
 
 ;; (smart-tabs-insinuate 'c 'c++ 'python)
 
@@ -260,6 +241,22 @@
   (current-buffer)))
 
 ;; agenda stuff
+
+(global-set-key (kbd "<f12>") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+
+;; should be conditional on machine
+(setq org-directory "~/AppData/Roaming/agenda")
+(setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
+
+;; clocking
+(setq org-log-done 'time)
+
+(setq org-clock-into-drawer nil)
+
+
+(global-set-key (kbd "<f12>") 'org-agenda)
+(setq org-fast-tag-selection-include-todo nil)
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "|" "DONE(d)" "OTHER(o)")))
