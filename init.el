@@ -9,9 +9,11 @@
 (setq custom-file "~/.emacs.d/custom.el")
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 
+;; do this on some sort of daily or weekly time point?
+;; such that melpa and stuff could still be reachable if not used in a long time
 (unless package-archive-contents
   (package-refresh-contents))
 
@@ -42,6 +44,9 @@
 (tooltip-mode -1)
 (set-fringe-mode 10)
 (menu-bar-mode -1)
+
+(setq ring-bell-function 'ignore)
+
 
 (column-number-mode)
 (global-display-line-numbers-mode t)
@@ -154,6 +159,8 @@
     (bootup/message "Succesfully found python")
   (bootup/message "Failed to find python"))
 
+
+
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
 	 ("C-x b" . counsel-ibuffer)
@@ -163,10 +170,25 @@
 
 (use-package doom-themes)
 
-
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
-(load-theme 'doom-palenight)
+(load-theme 'doom-palenight t)
+
+
+;; silence the bell
+(setq ring-bell-function 'ignore)
+
+
+(use-package projectile
+  :diminish
+  :config (projectile-mode)
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  (when (file-directory-p "~/Documents/Projects")
+    (setq projectile-project-search-path '("~/Projects/Code")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
 
 ;; doesn't work? 
 ;; (use-package which-key)
