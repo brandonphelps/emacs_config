@@ -7,6 +7,7 @@
     (insert (concat msg "\n"))))
 
 (setq custom-file "~/.emacs.d/custom.el")
+(setq specific-config-filename (concat (file-name-as-directory "box-specifics") (downcase (system-name)) ".el"))
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -19,6 +20,13 @@
 
 (unless (package-installed-p 'use-package)
   (package-install 'use-package t))
+
+
+
+;; hmm load customizations late or early? 
+(when (file-readable-p specific-config-filename)
+  (message-box "unable to load specific machine file")
+  (load-file specific-config-filename))
 
 (setq-default use-package-verbose t)
 (setq inhibit-startup-buffer-menu t)
@@ -133,10 +141,9 @@
   (setq projectile-switch-project-action #'projectile-dired))
 
 
-;; doesn't work? 
 (use-package which-key
   :init (which-key-mode)
-  :diminish which-key-mode
+  :diminish which-key
   :config
   (setq which-key-idle-delay 1))
 ;; (require 'conan)
@@ -200,9 +207,16 @@
 (global-set-key (kbd "<f12>") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 
-;; should be conditional on machine
-(setq org-directory "~/AppData/Roaming/agenda")
-(setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
+
+
+    
+;; ;; todo: make this less os specific or something.
+;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
+
+;; ;; should be conditional on machine
+;; (setq org-directory "~/AppData/Roaming/agenda")
+;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
+
 
 ;; clocking
 (setq org-log-done 'time)
@@ -221,9 +235,6 @@
 	("DONE" :foreground "forest green" :weight bold)
 	("OTHER" :foreground "forest green" :weight bold)))
 
-
-;; todo: make this less os specific or something.
-(setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
 
 ;; refile handling
 
@@ -249,3 +260,4 @@
   (require 'rust-mode)
   (require 'cargo)
   )
+

@@ -18,3 +18,4 @@ server/*
 
 projectile-bookmarks.eld
 /init.el_bkc
+/box-specifics/
