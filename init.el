@@ -20,20 +20,6 @@
 (unless (package-installed-p 'use-package)
   (package-install 'use-package t))
 
-(defun am_on_poxy ()
-  (interactive)
-  (add-to-list 'load-path "~/.emacs.d/elpa/use-package-20210106.2145")
-  (add-to-list 'load-path "~/.emacs.d/elpa/bind-key-20200805.1727")
-  (add-to-list 'load-path "~/.emacs.d/elpa/rust-mode")
-  (add-to-list 'load-path "~/.emacs.d/elpa/cargo.el")
-  (add-to-list 'load-path "~/.emacs.d/elpa/markdown-mode")
-  (require 'use-package)
-  (require 'rust-mode)
-  (require 'cargo)
-  )
-
-
-
 (setq-default use-package-verbose t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
@@ -44,58 +30,26 @@
 (tooltip-mode -1)
 (set-fringe-mode 10)
 (menu-bar-mode -1)
-
 (setq ring-bell-function 'ignore)
-
-
 (column-number-mode)
 (global-display-line-numbers-mode t)
 
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(inhibit-startup-buffer-menu t)
-;;  '(inhibit-startup-screen t)
-;;  '
-;;  '(package-selected-packages
-;;    '(db-pg markdown-mode cmake-mode toml-mode magit helm python-mode yaml-mode)))
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  )
 
-;; tabs and spaces formatting. 
-
-(when (file-directory-p "py_jira")
-  (message "loading up py jira")
-  (add-to-list 'load-path "~/.emacs.d/py_jira")
-  (require 'py_jira))
-
-;; (require 'py_jira)
 
 (require 'use-package)
 (setq use-package-always-ensure t)
 
 (use-package rust-mode)
-
 (use-package ivy
   :diminish
   :config
   (ivy-mode 1))
 
-;;; (quelpa-use-package quelpa utop alert flycheck flycheck-clang-tidy flycheck-rust emacsql-sqlite3 use-package forge helm lsp-mode racer tramp  neotree rust-mode yaml-mode magit lua-mode))
 ;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
 (use-package impatient-mode)
 (use-package helm)
-
 (use-package company)
 (use-package smart-tabs-mode)
-
-
 
 ;; languages
 (use-package cmake-mode)
@@ -113,6 +67,10 @@
 ;; 	      :username "brandonphelps"
 ;; 	      :auth 'forge)
 
+(when (file-directory-p "py_jira")
+  (message "loading up py jira")
+  (add-to-list 'load-path "~/.emacs.d/py_jira")
+  (require 'py_jira))
 
 
 ;; eglot
@@ -278,3 +236,16 @@
 ;; (smart-tabs-insinuate 'c 'javascript)
 ;; httpd-start
 ;; httpd-serve-directory.
+
+
+(defun am_on_poxy ()
+  (interactive)
+  (add-to-list 'load-path "~/.emacs.d/elpa/use-package-20210106.2145")
+  (add-to-list 'load-path "~/.emacs.d/elpa/bind-key-20200805.1727")
+  (add-to-list 'load-path "~/.emacs.d/elpa/rust-mode")
+  (add-to-list 'load-path "~/.emacs.d/elpa/cargo.el")
+  (add-to-list 'load-path "~/.emacs.d/elpa/markdown-mode")
+  (require 'use-package)
+  (require 'rust-mode)
+  (require 'cargo)
+  )
