@@ -45,6 +45,7 @@
 (setq use-package-always-ensure t)
 
 (use-package rust-mode)
+
 (use-package ivy
   :diminish
   :config
@@ -69,6 +70,9 @@
 (use-package magit)
 (use-package forge
   :after magit)
+
+;; (use-package rainbow-blocks)
+(use-package rainbow-delimiters)
 
 ;; (ghub-request "GET" "/user" nil
 ;; 	      :forge 'github
@@ -142,6 +146,7 @@
     (setq projectile-project-search-path '(bp-default-project-path)))
   (setq projectile-switch-project-action #'projectile-dired))
 
+(use-package helpful)
 
 (use-package which-key
   :init (which-key-mode)
