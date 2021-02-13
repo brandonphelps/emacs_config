@@ -19,3 +19,8 @@ server/*
 projectile-bookmarks.eld
 /init.el_bkc
 /box-specifics/
+/projectile.cache
+/remote_tools/
+/shell_setup/
+/tramp
+/url/
