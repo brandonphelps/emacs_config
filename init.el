@@ -210,11 +210,22 @@
     (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
   (current-buffer)))
 
+(defun bp/org-mode-setup ()
+  (org-indent-mode))
+
+;; org mode
+(use-package org
+  :hook bp/org-mode-setup
+  :config
+  (setq org-ellipsis " ↓"))
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode))
+
 ;; agenda stuff
 (global-set-key (kbd "<f12>") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
-
-
 
     
 ;; ;; todo: make this less os specific or something.
