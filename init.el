@@ -223,6 +223,22 @@
   :after org
   :hook (org-mode . org-bullets-mode))
 
+
+;; do we care about babel stuff? 
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)
+   (rust . t)))
+
+(use-package ob-rust)
+(setq org-confirm-babel-evaluate nil)
+
+(require 'org-tempo)
+
+(add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("rs" . "src rust"))
+
 ;; agenda stuff
 (global-set-key (kbd "<f12>") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
