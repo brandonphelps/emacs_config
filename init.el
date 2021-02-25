@@ -61,20 +61,23 @@
 (use-package forge
   :after magit)
 
-;; (ghub-request "GET" "/user" nil
-;; 	      :forge 'github
-;; 	      :host "api.github.com"
-;; 	      :username "brandonphelps"
-;; 	      :auth 'forge)
-
-(when (file-directory-p "py_jira")
+(when (file-directory-p "~/.emacs.d/py_jira")
   (message "loading up py jira")
   (add-to-list 'load-path "~/.emacs.d/py_jira")
   (require 'py_jira))
 
 
+
 ;; eglot
-(use-package eglot)
+;; (use-package eglot)
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :config
+  (lsp-enable-which-key-integration t))
+
 
 ;; eglot c / c++ 
 
