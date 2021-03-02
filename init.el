@@ -285,3 +285,10 @@
   (require 'cargo)
   )
 
+;; gpg helper funcs
+
+(defun efs/lookup-password (&rest keys)
+  (let ((result (apply #'auth-source-search keys)))
+    (if result
+	(funcall (plist-get (car result) :secret))
+      nil)))
