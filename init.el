@@ -1,3 +1,7 @@
+
+;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
+
+
 ;; doesn't seem to contain the messages that are added to it. 
 ;; (setq initial-buffer-choice "*bootup-report*")
 ;; bootup report helper functions. 
@@ -58,7 +62,13 @@
 ;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
 (use-package impatient-mode)
 (use-package helm)
-(use-package company)
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :custom
+  (company-minimum-prefix-length 3)
+  (company-idle-delay 0.4))
+
 (use-package smart-tabs-mode)
 
 ;; languages
@@ -87,9 +97,37 @@
 
 
 ;; eglot
-(use-package eglot)
+;; (use-package eglot)
 
 ;; eglot c / c++ 
+
+;;; lsp mode
+
+(defun efs/lsp-mode-setup ()
+  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (lsp-headerline-breadcrumb-mode))
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :hook (lsp-mode . efs/lsp-mode-setup)
+  :init
+  (setq lsp-keymap-prefix "C-c l") ;; Or 'C-l', 's-l'
+  :config
+  (lsp-enable-which-key-integration t))
+
+
+(use-package dap-mode)
+
+(require 'dap-gdb-lldb)
+
+
+(dap-register-debug-template "Rust::GDB Run Configuration"
+                             (list :type "gdb"
+                                   :request "launch"
+                                   :name "GDB::Run"
+                           :gdbpath "rust-gdb"
+                                   :target nil
+                                   :cwd nil))
 
 ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
 ;; (add-hook 'c-mode-hook 'eglot-ensure)
@@ -297,4 +335,10 @@
   (require 'rust-mode)
   (require 'cargo)
   )
+
+
+
+
+
+
 
