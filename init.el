@@ -109,12 +109,18 @@
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook (lsp-mode . efs/lsp-mode-setup)
+
   :init
   (setq lsp-keymap-prefix "C-c l") ;; Or 'C-l', 's-l'
+
+  :hook ((rust-mode . lsp)
+	 (lsp-mode . efs/lsp-mode-setup)
+	 )
   :config
   (lsp-enable-which-key-integration t))
 
+
+(use-package lsp-ui)
 
 (use-package dap-mode)
 
