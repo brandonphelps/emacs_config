@@ -10,10 +10,12 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
+(defvar machine-settings-file
+  (concat user-emacs-directory "box-specifics/" (downcase system-name))
+  "Settings file for the box we are currently on")
+
+;; set the custom file so emacs customization stuff goes there instead of here. 
 (setq custom-file "~/.emacs.d/custom.el")
-(setq specific-config-filename
-      (concat
-       (file-name-as-directory "box-specifics") (downcase (system-name)) ".el"))
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -27,11 +29,17 @@
 (unless (package-installed-p 'use-package)
   (package-install 'use-package t))
 
-
-
 (setq-default use-package-verbose t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
+
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+;; UI layout stuff. 
+(use-package doom-themes)
+(load-theme 'doom-palenight t)
 
 ;; basic UI setup. 
 (scroll-bar-mode -1)
@@ -39,16 +47,10 @@
 (tooltip-mode -1)
 (set-fringe-mode 10)
 (menu-bar-mode -1)
-(setq ring-bell-function 'ignore)
 (column-number-mode)
 (global-display-line-numbers-mode t)
+(setq ring-bell-function 'ignore)
 
-
-
-(require 'use-package)
-(setq use-package-always-ensure t)
-
-(use-package rust-mode)
 
 (use-package ivy
   :diminish
@@ -56,8 +58,8 @@
   (ivy-mode 1))
 
 ;; hmm load user specifics customizations late or early? 
-(when (file-readable-p specific-config-filename)
-  (load-file specific-config-filename))
+(when (file-readable-p machine-settings-dir)
+  (load-file machine-settings-dir))
 
 ;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
 (use-package impatient-mode)
@@ -124,17 +126,14 @@
 
 (use-package dap-mode)
 
-(require 'dap-gdb-lldb)
-
-
-(dap-register-debug-template "Rust::GDB Run Configuration"
-                             (list :type "gdb"
-                                   :request "launch"
-                                   :name "GDB::Run"
-                           :gdbpath "rust-gdb"
-                                   :target nil
-                                   :cwd nil))
-
+;; (require 'dap-gdb-lldb)
+;; (dap-register-debug-template "Rust::GDB Run Configuration"
+;;                              (list :type "gdb"
+;;                                    :request "launch"
+;;                                    :name "GDB::Run"
+;;                            :gdbpath "rust-gdb"
+;;                                    :target nil
+;;                                    :cwd nil))
 ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
 ;; (add-hook 'c-mode-hook 'eglot-ensure)
 ;; (add-hook 'c++-mode-hook 'eglot-ensure)
@@ -148,7 +147,9 @@
 
 ;; Rust handling. 
 (if (executable-find "rustup")
-    (bootup/message "Succesfully found rustup")
+    (progn
+      (use-package rust-mode)
+      (bootup/message "Succesfully found rustup"))
   ;;(setq components (shell-command-to-string "rustup component list")))
   (bootup/message "Failed to find rustup"))
 
@@ -167,11 +168,6 @@
 	 )
   )
 
-(use-package doom-themes)
-
-;; (load-theme 'deeper-blue)
-;; (load-theme 'tango-dark)
-(load-theme 'doom-palenight t)
 
 
 ;; silence the bell
