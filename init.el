@@ -14,6 +14,13 @@
   (concat user-emacs-directory "box-specifics/" (downcase system-name))
   "Settings file for the box we are currently on")
 
+(defvar py_jira-dir (concat user-emacs-directory "py_jira"))
+
+(when (file-directory-p py_jira-dir)
+  (add-to-list 'load-path "~/.emacs.d/py_jira")
+  (require 'py_jira))
+
+
 ;; set the custom file so emacs customization stuff goes there instead of here. 
 (setq custom-file "~/.emacs.d/custom.el")
 
@@ -52,24 +59,35 @@
 (setq ring-bell-function 'ignore)
 
 
+;; keybindings and auto complete stuff
 (use-package ivy
   :diminish
   :config
   (ivy-mode 1))
 
-;; hmm load user specifics customizations late or early? 
-(when (file-readable-p machine-settings-dir)
-  (load-file machine-settings-dir))
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+	 ("C-x b" . counsel-ibuffer)
+	 ("C-x C-f" . counsel-find-file)
+	 )
+  )
 
-;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
-(use-package impatient-mode)
-(use-package helm)
+(use-package rainbow-delimiters)
+
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
   :custom
   (company-minimum-prefix-length 3)
   (company-idle-delay 0.4))
+
+
+;; hmm load user specifics customizations late or early? 
+(when (file-readable-p machine-settings-file)
+  (load-file machine-settings-file))
+
+(use-package impatient-mode)
+(use-package helm)
 
 (use-package smart-tabs-mode)
 
@@ -83,19 +101,8 @@
 (use-package forge
   :after magit)
 
-;; (use-package rainbow-blocks)
-(use-package rainbow-delimiters)
 
-;; (ghub-request "GET" "/user" nil
-;; 	      :forge 'github
-;; 	      :host "api.github.com"
-;; 	      :username "brandonphelps"
-;; 	      :auth 'forge)
 
-(when (file-directory-p "py_jira")
-  (message "loading up py jira")
-  (add-to-list 'load-path "~/.emacs.d/py_jira")
-  (require 'py_jira))
 
 
 ;; eglot
@@ -160,13 +167,6 @@
 (if (executable-find "python")
     (bootup/message "Succesfully found python")
   (bootup/message "Failed to find python"))
-
-(use-package counsel
-  :bind (("M-x" . counsel-M-x)
-	 ("C-x b" . counsel-ibuffer)
-	 ("C-x C-f" . counsel-find-file)
-	 )
-  )
 
 
 
