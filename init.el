@@ -9,8 +9,9 @@
     (insert (concat msg "\n"))))
 
 (defvar machine-settings-file
-  (concat user-emacs-directory "box-specifics/" (downcase system-name))
+  (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
+
 
 (defvar py_jira-dir (concat user-emacs-directory "py_jira"))
 
@@ -178,8 +179,8 @@
   :bind-keymap
   ("C-c p" . projectile-command-map)
   :init
-  (when (boundp 'bp-default-project-path)
-    (setq projectile-project-search-path '(bp-default-project-path)))
+  ;; (when (boundp 'bp-default-project-path)
+  ;;   (setq projectile-project-search-path '(bp-default-project-path)))
   (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package helpful)
