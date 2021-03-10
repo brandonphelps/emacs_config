@@ -1,6 +1,4 @@
-
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
-
 
 ;; doesn't seem to contain the messages that are added to it. 
 ;; (setq initial-buffer-choice "*bootup-report*")
@@ -39,7 +37,6 @@
 (setq-default use-package-verbose t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
-
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -131,8 +128,7 @@
 
 (use-package lsp-ui)
 
-(use-package dap-mode)
-
+;; (use-package dap-mode)
 ;; (require 'dap-gdb-lldb)
 ;; (dap-register-debug-template "Rust::GDB Run Configuration"
 ;;                              (list :type "gdb"
@@ -156,6 +152,7 @@
 (if (executable-find "rustup")
     (progn
       (use-package rust-mode)
+      (use-package ob-rust)
       (bootup/message "Succesfully found rustup"))
   ;;(setq components (shell-command-to-string "rustup component list")))
   (bootup/message "Failed to find rustup"))
@@ -172,7 +169,6 @@
 
 ;; silence the bell
 (setq ring-bell-function 'ignore)
-
 
 
 (use-package projectile
@@ -263,18 +259,28 @@
   :after org
   :hook (org-mode . org-bullets-mode))
 
+(defvar bp-org-babel-languages
+  '((emacs-lisp . t)
+    (python . t)))
+
+(setq bp-org-babel-languages '((emacs-lisp . t) (python . t)))
+
+
+
+(defun rscript ()
+  (interactive)
+  (message (shell-command-to-string (concat "rust-script.exe " (buffer-file-name)))))
+
+;; Rust handling. 
+(when (and (executable-find "rustup") (executable-find "rust-script"))
+  ;; how to only add this once? 
+  (push '(rust . t) bp-org-babel-languages))
 
 ;; do we care about babel stuff? 
 (org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (python . t)
-   (rust . t)))
+ 'org-babel-load-languages bp-org-babel-languages)
 
-(use-package ob-rust)
 (setq org-confirm-babel-evaluate nil)
-
-(require 'org-tempo)
 
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 (add-to-list 'org-structure-template-alist '("rs" . "src rust"))
