@@ -348,11 +348,12 @@
   (require 'cargo)
   )
 
+
 ;; https://www.youtube.com/watch?v=_ZyD4n5zqxA
 
 (defun bp/vid-dl (user_url)
   (interactive "sURL: ")
-  (if (not (boundp video-dir))
+  (if (not (boundp 'video-dir))
       (message "video dir not found")
     
     (let ((url user_url) (default-directory video-dir))
