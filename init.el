@@ -8,6 +8,8 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
+(
+
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name))
   "Settings file for the box we are currently on")
@@ -266,6 +268,8 @@
 (setq bp-org-babel-languages '((emacs-lisp . t) (python . t)))
 
 
+(setq backup-directory '(("." . ,(expand-file-name "tmp/backups" user-emacs-directory))))
+
 
 (defun rscript ()
   (interactive)
@@ -344,9 +348,23 @@
   (require 'cargo)
   )
 
+;; https://www.youtube.com/watch?v=_ZyD4n5zqxA
 
+(defun bp/vid-dl (user_url)
+  (interactive "sURL: ")
+  (if (not (boundp video-dir))
+      (message "video dir not found")
+    
+    (let ((url user_url) (default-directory video-dir))
+      (async-start
+       ;; What to do in the child process
+       `(lambda ()
+	  (message ,(concat " downloading: " url " to " default-directory))
+	  (shell-command-to-string ,(concat "youtube-dl " url))
+	  ,(format "This is a %s" url)
+	  )
 
-
-
-
+       ;; What to do when it finishes
+       (lambda (r)
+	 (message "Async process done, result should be 222: %s" r))))))
 
