@@ -1,3 +1,5 @@
+(setq custom-file "~/.emacs.d/custom.el")
+
 ;; doesn't seem to contain the messages that are added to it. 
 ;; (setq initial-buffer-choice "*bootup-report*")
 ;; bootup report helper functions. 
@@ -6,10 +8,11 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
-(setq custom-file "~/.emacs.d/custom.el")
-
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
+
 (package-initialize)
 
 ;; do this on some sort of daily or weekly time point?
@@ -18,23 +21,11 @@
   (package-refresh-contents))
 
 (unless (package-installed-p 'use-package)
-  (package-install 'use-package t))
-
-(defun am_on_poxy ()
-  (interactive)
-  (add-to-list 'load-path "~/.emacs.d/elpa/use-package-20210106.2145")
-  (add-to-list 'load-path "~/.emacs.d/elpa/bind-key-20200805.1727")
-  (add-to-list 'load-path "~/.emacs.d/elpa/rust-mode")
-  (add-to-list 'load-path "~/.emacs.d/elpa/cargo.el")
-  (add-to-list 'load-path "~/.emacs.d/elpa/markdown-mode")
-  (require 'use-package)
-  (require 'rust-mode)
-  (require 'cargo)
-  )
+  (package-install 'use-package))
 
 
-
-(setq-default use-package-verbose t)
+(setq use-package-verbose t)
+(setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
 
@@ -47,28 +38,8 @@
 
 (setq ring-bell-function 'ignore)
 
-
 (column-number-mode)
 (global-display-line-numbers-mode t)
-
-;; (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  '(inhibit-startup-buffer-menu t)
-;;  '(inhibit-startup-screen t)
-;;  '
-;;  '(package-selected-packages
-;;    '(db-pg markdown-mode cmake-mode toml-mode magit helm python-mode yaml-mode)))
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
-;;  )
-
-;; tabs and spaces formatting. 
 
 (when (file-directory-p "py_jira")
   (message "loading up py jira")
@@ -79,6 +50,8 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+(use-package no-littering)
 
 (use-package rust-mode)
 
@@ -93,8 +66,7 @@
 (use-package helm)
 
 (use-package company)
-(use-package smart-tabs-mode)
-
+;; (use-package smart-tabs-mode)
 
 
 ;; languages
@@ -102,9 +74,40 @@
 (use-package markdown-mode)
 (use-package lua-mode)
 
+(use-package cargo)
+(use-package rust-mode)
+
+(add-hook 'rust-mode-hook
+	  (lambda () (setq indent-tabs-mode nil)))
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+  :config
+    (lsp-enable-which-key-integration t))
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+;;  :bind (:map company-active-map
+;;	      ("<tab>" . company-complete-selection))
+;;  (:map lsp-mode-map
+;;	("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0))
+
+
+
 ;; git related stuff.
-(use-package magit)
+(use-package magit
+  :commands magit-status
+  :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
 (use-package forge
+
   :after magit)
 
 ;; (ghub-request "GET" "/user" nil
@@ -116,7 +119,7 @@
 
 
 ;; eglot
-(use-package eglot)
+;; (use-package eglot)
 
 ;; eglot c / c++ 
 
@@ -152,12 +155,13 @@
 	 )
   )
 
-(use-package doom-themes)
+;; todo: how to check this only for if emacs is launched with gui.
+(use-package doom-themes
+  :init (load-theme 'doom-palenight t))
 
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
-(load-theme 'doom-palenight t)
-
+;;   :init (load-theme 'doom-Iosvkem t))
 
 ;; silence the bell
 (setq ring-bell-function 'ignore)
@@ -177,12 +181,17 @@
 
 ;; doesn't work? 
 (use-package which-key
-  :init (which-key-mode)
+  :defer 0
   :diminish which-key-mode
   :config
-  (setq which-key-idle-delay 1))
-;; (require 'conan)
+  (which-key-mode)
+    (setq which-key-idle-delay 1))
 
+;; (use-package which-key
+;;   :init (which-key-mode)
+;;   :diminish which-key-mode
+;;   :config
+;;   (setq which-key-idle-delay 1))
 
 ;; (smart-tabs-insinuate 'c 'c++ 'python)
 
@@ -194,13 +203,7 @@
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-;; (setq c-default-style "bsd")
-;; (setq-default c-basic-offset 2)
-;; (c-set-offset 'case-label '+)
-;; (ido-mode t)
-
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-
 (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 
 (defun my-c-mode-hook ()
