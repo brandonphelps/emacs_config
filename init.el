@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
-=======
 (setq custom-file "~/.emacs.d/custom.el")
->>>>>>> origin/master
 
 ;; doesn't seem to contain the messages that are added to it. 
 ;; (setq initial-buffer-choice "*bootup-report*")
@@ -12,7 +9,6 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
-<<<<<<< HEAD
 
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name))
@@ -30,15 +26,9 @@
 
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
-; (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-=======
-(require 'package)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("org" . "https://orgmode.org/elpa/")
 			 ("elpa" . "https://elpa.gnu.org/packages/")))
 
->>>>>>> origin/master
 (package-initialize)
 ;; do this on some sort of daily or weekly time point?
 ;; such that melpa and stuff could still be reachable if not used in a long time
@@ -47,10 +37,6 @@
 
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 
 (setq use-package-verbose t)
 (setq inhibit-startup-message t)
@@ -76,8 +62,6 @@
 (global-display-line-numbers-mode t)
 (setq ring-bell-function 'ignore)
 
-
-
 (column-number-mode)
 (global-display-line-numbers-mode t)
 
@@ -87,35 +71,21 @@
   (require 'py_jira))
 
 (use-package rainbow-delimiters)
-
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :custom
-  (company-minimum-prefix-length 3)
-  (company-idle-delay 0.4))
-
 (use-package no-littering)
-(use-package rust-mode)
-
 
 ;; hmm load user specifics customizations late or early? 
 (when (file-readable-p machine-settings-file)
   (load-file machine-settings-file))
+
+
 
 (use-package vertico
   :ensure t
   :init
   (vertico-mode))
 
-(use-package impatient-mode)
-(use-package helm)
-
-(use-package company)
-
 ;; languages
 (use-package cmake-mode)
-(use-package markdown-mode)
 (use-package lua-mode)
 
 (use-package cargo)
@@ -124,25 +94,28 @@
 (add-hook 'rust-mode-hook
 	  (lambda () (setq indent-tabs-mode nil)))
 
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :init
-  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-  :config
-    (lsp-enable-which-key-integration t))
 
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
-;;  :bind (:map company-active-map
-;;	      ("<tab>" . company-complete-selection))
-;;  (:map lsp-mode-map
-;;	("<tab>" . company-indent-or-complete-common))
   :custom
-  (company-minimum-prefix-length 1)
-    (company-idle-delay 0.0))
+  (company-minimum-prefix-length 3)
+  (company-idle-delay 0.2))
 
+;;; lsp mode
+(defun efs/lsp-mode-setup ()
+  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (lsp-headerline-breadcrumb-mode))
 
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+  :hook ((rust-mode . lsp)
+	 (lsp-mode . efs/lsp-mode-setup)
+	 )
+  :config
+    (lsp-enable-which-key-integration t))
 
 ;; git related stuff.
 (use-package magit
@@ -152,33 +125,6 @@
 
 (use-package forge
   :after magit)
-
-
-
-
-
-;; eglot
-;; (use-package eglot)
-
-;; eglot c / c++ 
-
-;;; lsp mode
-
-(defun efs/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-  (lsp-headerline-breadcrumb-mode))
-
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-
-  :init
-  (setq lsp-keymap-prefix "C-c l") ;; Or 'C-l', 's-l'
-
-  :hook ((rust-mode . lsp)
-	 (lsp-mode . efs/lsp-mode-setup)
-	 )
-  :config
-  (lsp-enable-which-key-integration t))
 
 
 (use-package lsp-ui)
@@ -238,6 +184,7 @@
     (bootup/message "Succesfully found python")
   (bootup/message "Failed to find python"))
 
+;; replaced with vertico
 ;; (use-package counsel
 ;;   :bind (("M-x" . counsel-M-x)
 ;; 	 ("C-x b" . counsel-ibuffer)
@@ -253,8 +200,6 @@
 ;; (load-theme 'tango-dark)
 ;;   :init (load-theme 'doom-Iosvkem t))
 
-;; silence the bell
-(setq ring-bell-function 'ignore)
 
 
 (use-package projectile
@@ -271,7 +216,6 @@
 (use-package helpful)
 
 (use-package which-key
-  :defer 0
   :diminish which-key-mode
   :config
   (which-key-mode)
@@ -287,6 +231,7 @@
 
 ;; compliation mode coloring 
 (require 'ansi-color)
+
 (defun colorize-compilation-buffer ()
   (toggle-read-only)
   (ansi-color-apply-on-region compilation-filter-start (point))
@@ -325,7 +270,7 @@
 ;; (global-set-key (kbd "C-c l") 'windmove-right)
 
 
-
+(use-package markdown-mode)
 (defun markdown-html (buffer)
   (princ (with-current-buffer buffer
     (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
@@ -418,22 +363,7 @@
 ;; httpd-start
 ;; httpd-serve-directory.
 
-
-(defun am_on_poxy ()
-  (interactive)
-  (add-to-list 'load-path "~/.emacs.d/elpa/use-package-20210106.2145")
-  (add-to-list 'load-path "~/.emacs.d/elpa/bind-key-20200805.1727")
-  (add-to-list 'load-path "~/.emacs.d/elpa/rust-mode")
-  (add-to-list 'load-path "~/.emacs.d/elpa/cargo.el")
-  (add-to-list 'load-path "~/.emacs.d/elpa/markdown-mode")
-  (require 'use-package)
-  (require 'rust-mode)
-  (require 'cargo)
-  )
-
-
 ;; https://www.youtube.com/watch?v=_ZyD4n5zqxA
-
 (defun bp/vid-dl (user_url)
   (interactive "sURL: ")
   (if (not (boundp 'video-dir))
