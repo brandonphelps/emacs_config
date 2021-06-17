@@ -8,7 +8,6 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
-(
 
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name))
@@ -25,16 +24,17 @@
 (setq custom-file "~/.emacs.d/custom.el")
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
+; (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
-
 ;; do this on some sort of daily or weekly time point?
 ;; such that melpa and stuff could still be reachable if not used in a long time
 (unless package-archive-contents
   (package-refresh-contents))
 
 (unless (package-installed-p 'use-package)
-  (package-install 'use-package t))
+  (package-install 'use-package))
 
 (setq-default use-package-verbose t)
 (setq inhibit-startup-buffer-menu t)
@@ -42,6 +42,8 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+(use-package yaml-mode)
 
 ;; UI layout stuff. 
 (use-package doom-themes)
@@ -59,10 +61,10 @@
 
 
 ;; keybindings and auto complete stuff
-(use-package ivy
-  :diminish
-  :config
-  (ivy-mode 1))
+;; (use-package ivy
+;;   :diminish
+;;   :config
+;;   (ivy-mode 1))
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
@@ -85,6 +87,11 @@
 (when (file-readable-p machine-settings-file)
   (load-file machine-settings-file))
 
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode))
+
 (use-package impatient-mode)
 (use-package helm)
 
@@ -97,9 +104,8 @@
 
 ;; git related stuff.
 (use-package magit)
-(use-package forge
-  :after magit)
-
+;; (use-package forge
+;;   :after magit)
 
 
 
@@ -129,6 +135,24 @@
 
 
 (use-package lsp-ui)
+
+(use-package dap-mode
+  :ensure
+  :config
+  (dap-ui-mode)
+  (dap-ui-controls-mode 1)
+  (require 'dap-lldb)
+  (require 'dap-gdb-lldb)
+  ;; installs 
+  (dap-gdb-lldb-setup)
+  (dap-register-debug-template
+   "Rust::LLDB Run Configuration"
+   (list :type "lldb"
+	 :request "launch"
+	 :name "LLDB::Run"
+	 :gdbpath "rust-lldb"
+	 :target nil
+	 :cwd nil)))
 
 ;; (use-package dap-mode)
 ;; (require 'dap-gdb-lldb)
