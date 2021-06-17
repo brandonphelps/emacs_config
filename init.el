@@ -22,14 +22,10 @@
   (require 'py_jira))
 
 
-;; set the custom file so emacs customization stuff goes there instead of here. 
-(setq custom-file "~/.emacs.d/custom.el")
-
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("org" . "https://orgmode.org/elpa/")
 			 ("elpa" . "https://elpa.gnu.org/packages/")))
-
 (package-initialize)
 ;; do this on some sort of daily or weekly time point?
 ;; such that melpa and stuff could still be reachable if not used in a long time
@@ -52,6 +48,7 @@
 ;; UI layout stuff. 
 (use-package doom-themes)
 (load-theme 'doom-palenight t)
+
 
 ;; basic UI setup. 
 (scroll-bar-mode -1)
@@ -78,30 +75,30 @@
 (when (file-readable-p machine-settings-file)
   (load-file machine-settings-file))
 
-
-
 (use-package vertico
   :ensure t
   :init
   (vertico-mode))
 
+(use-package cargo)
+
 ;; languages
 (use-package cmake-mode)
 (use-package lua-mode)
-
-(use-package cargo)
 (use-package rust-mode)
 
 (add-hook 'rust-mode-hook
 	  (lambda () (setq indent-tabs-mode nil)))
 
 
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
+;; git related stuff.
+(use-package magit
+  :commands magit-status
   :custom
-  (company-minimum-prefix-length 3)
-  (company-idle-delay 0.2))
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+(use-package forge
+  :after magit)
 
 ;;; lsp mode
 (defun efs/lsp-mode-setup ()
@@ -118,17 +115,14 @@
   :config
     (lsp-enable-which-key-integration t))
 
-;; git related stuff.
-(use-package magit
-  :commands magit-status
-  :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-(use-package forge
-  :after magit)
-
-
 (use-package lsp-ui)
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :custom
+  (company-minimum-prefix-length 3)
+  (company-idle-delay 0.2))
 
 (use-package dap-mode
   :ensure
@@ -286,6 +280,11 @@
   :config
   (setq org-ellipsis " ↓"))
 
+
+(use-package org-roam)
+;; todo move this to box specifics
+(setq org-roam-directory "~/org-roam")
+
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode))
@@ -382,4 +381,6 @@
        ;; What to do when it finishes
        (lambda (r)
 	 (message "Async process done, result should be 222: %s" r))))))
+
+
 
