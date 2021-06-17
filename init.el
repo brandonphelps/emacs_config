@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
+=======
+(setq custom-file "~/.emacs.d/custom.el")
+>>>>>>> origin/master
 
 ;; doesn't seem to contain the messages that are added to it. 
 ;; (setq initial-buffer-choice "*bootup-report*")
@@ -8,6 +12,7 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
+<<<<<<< HEAD
 
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name))
@@ -27,6 +32,13 @@
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
 			 ("elpa" . "https://elpa.gnu.org/packages/")))
 ; (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+=======
+(require 'package)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
+
+>>>>>>> origin/master
 (package-initialize)
 ;; do this on some sort of daily or weekly time point?
 ;; such that melpa and stuff could still be reachable if not used in a long time
@@ -35,8 +47,13 @@
 
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
+<<<<<<< HEAD
+=======
 
-(setq-default use-package-verbose t)
+>>>>>>> origin/master
+
+(setq use-package-verbose t)
+(setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
 
@@ -60,18 +77,14 @@
 (setq ring-bell-function 'ignore)
 
 
-;; keybindings and auto complete stuff
-;; (use-package ivy
-;;   :diminish
-;;   :config
-;;   (ivy-mode 1))
 
-(use-package counsel
-  :bind (("M-x" . counsel-M-x)
-	 ("C-x b" . counsel-ibuffer)
-	 ("C-x C-f" . counsel-find-file)
-	 )
-  )
+(column-number-mode)
+(global-display-line-numbers-mode t)
+
+(when (file-directory-p "py_jira")
+  (message "loading up py jira")
+  (add-to-list 'load-path "~/.emacs.d/py_jira")
+  (require 'py_jira))
 
 (use-package rainbow-delimiters)
 
@@ -81,6 +94,9 @@
   :custom
   (company-minimum-prefix-length 3)
   (company-idle-delay 0.4))
+
+(use-package no-littering)
+(use-package rust-mode)
 
 
 ;; hmm load user specifics customizations late or early? 
@@ -95,17 +111,48 @@
 (use-package impatient-mode)
 (use-package helm)
 
-(use-package smart-tabs-mode)
+(use-package company)
 
 ;; languages
 (use-package cmake-mode)
 (use-package markdown-mode)
 (use-package lua-mode)
 
+(use-package cargo)
+(use-package rust-mode)
+
+(add-hook 'rust-mode-hook
+	  (lambda () (setq indent-tabs-mode nil)))
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+  :config
+    (lsp-enable-which-key-integration t))
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+;;  :bind (:map company-active-map
+;;	      ("<tab>" . company-complete-selection))
+;;  (:map lsp-mode-map
+;;	("<tab>" . company-indent-or-complete-common))
+  :custom
+  (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0))
+
+
+
 ;; git related stuff.
-(use-package magit)
-;; (use-package forge
-;;   :after magit)
+(use-package magit
+  :commands magit-status
+  :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+(use-package forge
+  :after magit)
+
 
 
 
@@ -191,7 +238,20 @@
     (bootup/message "Succesfully found python")
   (bootup/message "Failed to find python"))
 
+;; (use-package counsel
+;;   :bind (("M-x" . counsel-M-x)
+;; 	 ("C-x b" . counsel-ibuffer)
+;; 	 ("C-x C-f" . counsel-find-file)
+;; 	 )
+;;   )
 
+;; todo: how to check this only for if emacs is launched with gui.
+(use-package doom-themes
+  :init (load-theme 'doom-palenight t))
+
+;; (load-theme 'deeper-blue)
+;; (load-theme 'tango-dark)
+;;   :init (load-theme 'doom-Iosvkem t))
 
 ;; silence the bell
 (setq ring-bell-function 'ignore)
@@ -211,12 +271,17 @@
 (use-package helpful)
 
 (use-package which-key
-  :init (which-key-mode)
-  :diminish which-key
+  :defer 0
+  :diminish which-key-mode
   :config
-  (setq which-key-idle-delay 1))
-;; (require 'conan)
+  (which-key-mode)
+    (setq which-key-idle-delay 1))
 
+;; (use-package which-key
+;;   :init (which-key-mode)
+;;   :diminish which-key-mode
+;;   :config
+;;   (setq which-key-idle-delay 1))
 
 ;; (smart-tabs-insinuate 'c 'c++ 'python)
 
@@ -228,13 +293,7 @@
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-;; (setq c-default-style "bsd")
-;; (setq-default c-basic-offset 2)
-;; (c-set-offset 'case-label '+)
-;; (ido-mode t)
-
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-
 (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 
 (defun my-c-mode-hook ()
