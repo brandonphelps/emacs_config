@@ -1,6 +1,5 @@
-
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
-
+(setq custom-file "~/.emacs.d/custom.el")
 
 ;; doesn't seem to contain the messages that are added to it. 
 ;; (setq initial-buffer-choice "*bootup-report*")
@@ -10,28 +9,48 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
+
+(defvar machine-settings-file
+  (concat user-emacs-directory "box-specifics/" (downcase system-name))
+  "Settings file for the box we are currently on")
+
+(defvar py_jira-dir (concat user-emacs-directory "py_jira"))
+
+(when (file-directory-p py_jira-dir)
+  (add-to-list 'load-path "~/.emacs.d/py_jira")
+  (require 'py_jira))
+
+
+;; set the custom file so emacs customization stuff goes there instead of here. 
 (setq custom-file "~/.emacs.d/custom.el")
-(setq specific-config-filename
-      (concat
-       (file-name-as-directory "box-specifics") (downcase (system-name)) ".el"))
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			 ("org" . "https://orgmode.org/elpa/")
+			 ("elpa" . "https://elpa.gnu.org/packages/")))
 
+(package-initialize)
 ;; do this on some sort of daily or weekly time point?
 ;; such that melpa and stuff could still be reachable if not used in a long time
 (unless package-archive-contents
   (package-refresh-contents))
 
 (unless (package-installed-p 'use-package)
-  (package-install 'use-package t))
+  (package-install 'use-package))
 
-
-
-(setq-default use-package-verbose t)
+(setq use-package-verbose t)
+(setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
+
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+(use-package yaml-mode)
+
+;; UI layout stuff. 
+(use-package doom-themes)
+(load-theme 'doom-palenight t)
 
 ;; basic UI setup. 
 (scroll-bar-mode -1)
@@ -39,102 +58,104 @@
 (tooltip-mode -1)
 (set-fringe-mode 10)
 (menu-bar-mode -1)
-(setq ring-bell-function 'ignore)
 (column-number-mode)
 (global-display-line-numbers-mode t)
+(setq ring-bell-function 'ignore)
 
-
-
-(require 'use-package)
-(setq use-package-always-ensure t)
-
-(use-package rust-mode)
-
-(use-package ivy
-  :diminish
-  :config
-  (ivy-mode 1))
-
-;; hmm load user specifics customizations late or early? 
-(when (file-readable-p specific-config-filename)
-  (load-file specific-config-filename))
-
-;; todo: define a minimum set of useful packages and an extended to reduce startup time. 
-(use-package impatient-mode)
-(use-package helm)
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :custom
-  (company-minimum-prefix-length 3)
-  (company-idle-delay 0.4))
-
-(use-package smart-tabs-mode)
-
-;; languages
-(use-package cmake-mode)
-(use-package markdown-mode)
-(use-package lua-mode)
-
-;; git related stuff.
-(use-package magit)
-(use-package forge
-  :after magit)
-
-;; (use-package rainbow-blocks)
-(use-package rainbow-delimiters)
-
-;; (ghub-request "GET" "/user" nil
-;; 	      :forge 'github
-;; 	      :host "api.github.com"
-;; 	      :username "brandonphelps"
-;; 	      :auth 'forge)
+(column-number-mode)
+(global-display-line-numbers-mode t)
 
 (when (file-directory-p "py_jira")
   (message "loading up py jira")
   (add-to-list 'load-path "~/.emacs.d/py_jira")
   (require 'py_jira))
 
+(use-package rainbow-delimiters)
+(use-package no-littering)
 
-;; eglot
-;; (use-package eglot)
+;; hmm load user specifics customizations late or early? 
+(when (file-readable-p machine-settings-file)
+  (load-file machine-settings-file))
 
-;; eglot c / c++ 
+
+
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode))
+
+;; languages
+(use-package cmake-mode)
+(use-package lua-mode)
+
+(use-package cargo)
+(use-package rust-mode)
+
+(add-hook 'rust-mode-hook
+	  (lambda () (setq indent-tabs-mode nil)))
+
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :custom
+  (company-minimum-prefix-length 3)
+  (company-idle-delay 0.2))
 
 ;;; lsp mode
-
 (defun efs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-
   :init
-  (setq lsp-keymap-prefix "C-c l") ;; Or 'C-l', 's-l'
-
+  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :hook ((rust-mode . lsp)
 	 (lsp-mode . efs/lsp-mode-setup)
 	 )
   :config
-  (lsp-enable-which-key-integration t))
+    (lsp-enable-which-key-integration t))
+
+;; git related stuff.
+(use-package magit
+  :commands magit-status
+  :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+(use-package forge
+  :after magit)
 
 
 (use-package lsp-ui)
 
-(use-package dap-mode)
+(use-package dap-mode
+  :ensure
+  :config
+  (dap-ui-mode)
+  (dap-ui-controls-mode 1)
+  (require 'dap-lldb)
+  (require 'dap-gdb-lldb)
+  ;; installs 
+  (dap-gdb-lldb-setup)
+  (dap-register-debug-template
+   "Rust::LLDB Run Configuration"
+   (list :type "lldb"
+	 :request "launch"
+	 :name "LLDB::Run"
+	 :gdbpath "rust-lldb"
+	 :target nil
+	 :cwd nil)))
 
-(require 'dap-gdb-lldb)
-
-
-(dap-register-debug-template "Rust::GDB Run Configuration"
-                             (list :type "gdb"
-                                   :request "launch"
-                                   :name "GDB::Run"
-                           :gdbpath "rust-gdb"
-                                   :target nil
-                                   :cwd nil))
-
+;; (use-package dap-mode)
+;; (require 'dap-gdb-lldb)
+;; (dap-register-debug-template "Rust::GDB Run Configuration"
+;;                              (list :type "gdb"
+;;                                    :request "launch"
+;;                                    :name "GDB::Run"
+;;                            :gdbpath "rust-gdb"
+;;                                    :target nil
+;;                                    :cwd nil))
 ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
 ;; (add-hook 'c-mode-hook 'eglot-ensure)
 ;; (add-hook 'c++-mode-hook 'eglot-ensure)
@@ -148,7 +169,10 @@
 
 ;; Rust handling. 
 (if (executable-find "rustup")
-    (bootup/message "Succesfully found rustup")
+    (progn
+      (use-package rust-mode)
+      (use-package ob-rust)
+      (bootup/message "Succesfully found rustup"))
   ;;(setq components (shell-command-to-string "rustup component list")))
   (bootup/message "Failed to find rustup"))
 
@@ -160,22 +184,21 @@
     (bootup/message "Succesfully found python")
   (bootup/message "Failed to find python"))
 
-(use-package counsel
-  :bind (("M-x" . counsel-M-x)
-	 ("C-x b" . counsel-ibuffer)
-	 ("C-x C-f" . counsel-find-file)
-	 )
-  )
+;; replaced with vertico
+;; (use-package counsel
+;;   :bind (("M-x" . counsel-M-x)
+;; 	 ("C-x b" . counsel-ibuffer)
+;; 	 ("C-x C-f" . counsel-find-file)
+;; 	 )
+;;   )
 
-(use-package doom-themes)
+;; todo: how to check this only for if emacs is launched with gui.
+(use-package doom-themes
+  :init (load-theme 'doom-palenight t))
 
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
-(load-theme 'doom-palenight t)
-
-
-;; silence the bell
-(setq ring-bell-function 'ignore)
+;;   :init (load-theme 'doom-Iosvkem t))
 
 
 
@@ -193,30 +216,29 @@
 (use-package helpful)
 
 (use-package which-key
-  :init (which-key-mode)
-  :diminish which-key
+  :diminish which-key-mode
   :config
-  (setq which-key-idle-delay 1))
-;; (require 'conan)
+  (which-key-mode)
+    (setq which-key-idle-delay 1))
 
+;; (use-package which-key
+;;   :init (which-key-mode)
+;;   :diminish which-key-mode
+;;   :config
+;;   (setq which-key-idle-delay 1))
 
 ;; (smart-tabs-insinuate 'c 'c++ 'python)
 
 ;; compliation mode coloring 
 (require 'ansi-color)
+
 (defun colorize-compilation-buffer ()
   (toggle-read-only)
   (ansi-color-apply-on-region compilation-filter-start (point))
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-;; (setq c-default-style "bsd")
-;; (setq-default c-basic-offset 2)
-;; (c-set-offset 'case-label '+)
-;; (ido-mode t)
-
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-
 (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 
 (defun my-c-mode-hook ()
@@ -248,7 +270,7 @@
 ;; (global-set-key (kbd "C-c l") 'windmove-right)
 
 
-
+(use-package markdown-mode)
 (defun markdown-html (buffer)
   (princ (with-current-buffer buffer
     (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
@@ -267,18 +289,30 @@
   :after org
   :hook (org-mode . org-bullets-mode))
 
+(defvar bp-org-babel-languages
+  '((emacs-lisp . t)
+    (python . t)))
+
+(setq bp-org-babel-languages '((emacs-lisp . t) (python . t)))
+
+
+(setq backup-directory '(("." . ,(expand-file-name "tmp/backups" user-emacs-directory))))
+
+
+(defun rscript ()
+  (interactive)
+  (message (shell-command-to-string (concat "rust-script.exe " (buffer-file-name)))))
+
+;; Rust handling. 
+(when (and (executable-find "rustup") (executable-find "rust-script"))
+  ;; how to only add this once? 
+  (push '(rust . t) bp-org-babel-languages))
 
 ;; do we care about babel stuff? 
 (org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (python . t)
-   (rust . t)))
+ 'org-babel-load-languages bp-org-babel-languages)
 
-(use-package ob-rust)
 (setq org-confirm-babel-evaluate nil)
-
-(require 'org-tempo)
 
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 (add-to-list 'org-structure-template-alist '("rs" . "src rust"))
@@ -329,22 +363,22 @@
 ;; httpd-start
 ;; httpd-serve-directory.
 
+;; https://www.youtube.com/watch?v=_ZyD4n5zqxA
+(defun bp/vid-dl (user_url)
+  (interactive "sURL: ")
+  (if (not (boundp 'video-dir))
+      (message "video dir not found")
+    
+    (let ((url user_url) (default-directory video-dir))
+      (async-start
+       ;; What to do in the child process
+       `(lambda ()
+	  (message ,(concat " downloading: " url " to " default-directory))
+	  (shell-command-to-string ,(concat "youtube-dl " url))
+	  ,(format "This is a %s" url)
+	  )
 
-(defun am_on_poxy ()
-  (interactive)
-  (add-to-list 'load-path "~/.emacs.d/elpa/use-package-20210106.2145")
-  (add-to-list 'load-path "~/.emacs.d/elpa/bind-key-20200805.1727")
-  (add-to-list 'load-path "~/.emacs.d/elpa/rust-mode")
-  (add-to-list 'load-path "~/.emacs.d/elpa/cargo.el")
-  (add-to-list 'load-path "~/.emacs.d/elpa/markdown-mode")
-  (require 'use-package)
-  (require 'rust-mode)
-  (require 'cargo)
-  )
-
-
-
-
-
-
+       ;; What to do when it finishes
+       (lambda (r)
+	 (message "Async process done, result should be 222: %s" r))))))
 
