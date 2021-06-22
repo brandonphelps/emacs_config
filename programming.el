@@ -52,7 +52,8 @@
 
 
 
-
+;; ob-rust
+(use-package ob-rust)
 ;; general items. 
 
 ;;; lsp mode

@@ -80,6 +80,14 @@
   :init
   (vertico-mode))
 
+;; Use the `orderless' completion style.
+;; Enable `partial-completion' for files to allow path expansion.
+;; You may prefer to use `initials' instead of `partial-completion'.
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
 
 
 ;; git related stuff.
@@ -91,7 +99,7 @@
 (use-package forge
   :after magit)
 
-
+(use-package ivy)
 
 ;; todo: how to check this only for if emacs is launched with gui.
 (use-package doom-themes
