@@ -1,6 +1,9 @@
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
 (setq custom-file "~/.emacs.d/custom.el")
 
+;; look into this https://gitlab.com/jgkamat/rmsbolt
+
+
 ;; doesn't seem to contain the messages that are added to it. 
 ;; (setq initial-buffer-choice "*bootup-report*")
 ;; bootup report helper functions. 
@@ -49,9 +52,6 @@
 
 (use-package yaml-mode)
 
-;; UI layout stuff. 
-(use-package doom-themes)
-(load-theme 'doom-palenight t)
 
 
 ;; basic UI setup. 
@@ -102,8 +102,12 @@
 (use-package ivy)
 
 ;; todo: how to check this only for if emacs is launched with gui.
-(use-package doom-themes
-  :init (load-theme 'doom-palenight t))
+;; UI layout stuff. 
+(when (display-graphic-p) 
+  (use-package doom-themes
+    :init (load-theme 'doom-palenight t)))
+
+
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
 ;;   :init (load-theme 'doom-Iosvkem t))
