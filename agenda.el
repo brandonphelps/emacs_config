@@ -61,3 +61,9 @@
 
 ;; remove clocked tasks with 0:00 duration
 (setq org-clock-out-remove-zero-time-clocks t)
+
+
+;; Rust handling. 
+(when (and (executable-find "rustup") (executable-find "rust-script"))
+  ;; how to only add this once? 
+  (push '(rust . t) bp-org-babel-languages))

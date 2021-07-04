@@ -1,4 +1,9 @@
 
+var/
+straight/
+.cache/
+.extension/
+
 bookmarks
 custom.el
 doctor.el

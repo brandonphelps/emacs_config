@@ -1,3 +1,4 @@
+
 ;; straight bootstrap
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -12,27 +13,21 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+
+;; look into this https://gitlab.com/jgkamat/rmsbolt
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
 (setq custom-file "~/.emacs.d/custom.el")
 
-;; look into this https://gitlab.com/jgkamat/rmsbolt
-
-
-;; doesn't seem to contain the messages that are added to it. 
-;; (setq initial-buffer-choice "*bootup-report*")
-;; bootup report helper functions. 
-(defun bootup/message (msg)
-  (with-current-buffer (get-buffer-create "*bootup-report*")
-    (end-of-buffer)
-    (insert (concat msg "\n"))))
 
 
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
 
-(straight-use-package 'use-package)
-(setq straight-use-package-by-default t)
+(load-file (concat user-emacs-directory "programming.el"))
+(load-file (concat user-emacs-directory "agenda.el"))
 
 
 (defvar py_jira-dir (concat user-emacs-directory "py_jira"))
@@ -40,6 +35,8 @@
 (when (file-directory-p py_jira-dir)
   (add-to-list 'load-path "~/.emacs.d/py_jira")
   (require 'py_jira))
+
+
 
 (setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
@@ -62,6 +59,9 @@
 (use-package rainbow-delimiters)
 (use-package no-littering)
 
+
+
+
 ;; hmm load user specifics customizations late or early? 
 (when (file-readable-p machine-settings-file)
   (load-file machine-settings-file))
@@ -79,19 +79,6 @@
         completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
 
-
-;; git related stuff.
-(use-package magit
-  :commands magit-status
-  :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-(use-package forge
-  :after magit)
-
-(use-package ivy)
-
-
 ;; todo: how to check this only for if emacs is launched with gui.
 ;; UI layout stuff. 
 (when (display-graphic-p) 
@@ -101,6 +88,11 @@
 ;; (load-theme 'tango-dark)
 ;;   :init (load-theme 'doom-Iosvkem t))
 
+(when (boundp 'bp-default-project-path)
+  (message "%s" bp-default-project-path))
+
+(use-package ivy)
+
 (use-package projectile
   :diminish
   :config (projectile-mode)
@@ -109,7 +101,7 @@
   ("C-c p" . projectile-command-map)
   :init
   ;; (when (boundp 'bp-default-project-path)
-  ;;   (setq projectile-project-search-path '(bp-default-project-path)))
+  ;;     (setq projectile-project-search-path '(bp-default-project-path)))
   (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package helpful)
@@ -119,26 +111,6 @@
   :config
   (which-key-mode)
     (setq which-key-idle-delay 1))
-
-;; (use-package which-key
-;;   :init (which-key-mode)
-;;   :diminish which-key-mode
-;;   :config
-;;   (setq which-key-idle-delay 1))
-
-;; (smart-tabs-insinuate 'c 'c++ 'python)
-
-;; compliation mode coloring 
-(require 'ansi-color)
-
-(defun colorize-compilation-buffer ()
-  (toggle-read-only)
-  (ansi-color-apply-on-region compilation-filter-start (point))
-  (toggle-read-only))
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
-
-(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-(setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 
 ;; mail server stuff
 (setq send-mail-function 'smtpmail-send-it
@@ -174,10 +146,6 @@
   (interactive)
   (message (shell-command-to-string (concat "rust-script.exe " (buffer-file-name)))))
 
-;; Rust handling. 
-(when (and (executable-find "rustup") (executable-find "rust-script"))
-  ;; how to only add this once? 
-  (push '(rust . t) bp-org-babel-languages))
 
     
 ;; ;; todo: make this less os specific or something.
