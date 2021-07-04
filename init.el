@@ -1,3 +1,19 @@
+
+
+;; straight bootstrap
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
 (setq custom-file "~/.emacs.d/custom.el")
 
@@ -14,6 +30,8 @@
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
 
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
 
 (defvar py_jira-dir (concat user-emacs-directory "py_jira"))
 
@@ -21,34 +39,9 @@
   (add-to-list 'load-path "~/.emacs.d/py_jira")
   (require 'py_jira))
 
-
-(require 'package)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
-(package-initialize)
-;; do this on some sort of daily or weekly time point?
-;; such that melpa and stuff could still be reachable if not used in a long time
-(unless package-archive-contents
-  (package-refresh-contents))
-
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-
-(setq use-package-verbose t)
 (setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
-
-(require 'use-package)
-(setq use-package-always-ensure t)
-
-(use-package yaml-mode)
-
-;; UI layout stuff. 
-(use-package doom-themes)
-(load-theme 'doom-palenight t)
-
 
 ;; basic UI setup. 
 (scroll-bar-mode -1)
@@ -76,9 +69,17 @@
   (load-file machine-settings-file))
 
 (use-package vertico
-  :ensure t
   :init
   (vertico-mode))
+
+;; Use the `orderless' completion style.
+;; Enable `partial-completion' for files to allow path expansion.
+;; You may prefer to use `initials' instead of `partial-completion'.
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
 
 (use-package cargo)
 
@@ -122,10 +123,9 @@
   :hook (lsp-mode . company-mode)
   :custom
   (company-minimum-prefix-length 3)
-  (company-idle-delay 0.2))
+  (company-idle-delay 0.4))
 
 (use-package dap-mode
-  :ensure
   :config
   (dap-ui-mode)
   (dap-ui-controls-mode 1)
@@ -142,22 +142,8 @@
 	 :target nil
 	 :cwd nil)))
 
-;; (use-package dap-mode)
-;; (require 'dap-gdb-lldb)
-;; (dap-register-debug-template "Rust::GDB Run Configuration"
-;;                              (list :type "gdb"
-;;                                    :request "launch"
-;;                                    :name "GDB::Run"
-;;                            :gdbpath "rust-gdb"
-;;                                    :target nil
-;;                                    :cwd nil))
-;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-;; (add-hook 'c-mode-hook 'eglot-ensure)
-;; (add-hook 'c++-mode-hook 'eglot-ensure)
-
 ;; Todo; check if rustup components are installed.
 ;; rls needs , rls, rust-src rust-analysis 
-
 (if (executable-find "clangd")
     (bootup/message "Successfully found clangd")
   (bootup/message "Failed to find clangd"))
@@ -180,9 +166,13 @@
   (bootup/message "Failed to find python"))
 
 
+
 ;; todo: how to check this only for if emacs is launched with gui.
-(use-package doom-themes
-  :init (load-theme 'doom-palenight t))
+(if (display-graphic-p)
+    (use-package doom-themes
+      :straight t
+      :init (load-theme 'doom-palenight t)))
+
 
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
@@ -256,7 +246,6 @@
 ;; (global-set-key (kbd "C-c j") 'windmove-left)
 ;; (global-set-key (kbd "C-c l") 'windmove-right)
 
-
 (use-package markdown-mode)
 (defun markdown-html (buffer)
   (princ (with-current-buffer buffer
@@ -300,19 +289,6 @@
   ;; how to only add this once? 
   (push '(rust . t) bp-org-babel-languages))
 
-;; do we care about babel stuff? 
-(org-babel-do-load-languages
- 'org-babel-load-languages bp-org-babel-languages)
-
-(setq org-confirm-babel-evaluate nil)
-
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("rs" . "src rust"))
-
-;; agenda stuff
-(global-set-key (kbd "<f12>") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-
     
 ;; ;; todo: make this less os specific or something.
 ;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
@@ -320,36 +296,6 @@
 ;; ;; should be conditional on machine
 ;; (setq org-directory "~/AppData/Roaming/agenda")
 ;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
-
-
-;; clocking
-(setq org-log-done 'time)
-
-(setq org-clock-into-drawer nil)
-
-
-(global-set-key (kbd "<f12>") 'org-agenda)
-(setq org-fast-tag-selection-include-todo nil)
-
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "|" "DONE(d)" "OTHER(o)")))
-
-(setq org-todo-keyword-faces
-      '(("TODO" :foreground "red" :weight bold)
-	("DONE" :foreground "forest green" :weight bold)
-	("OTHER" :foreground "forest green" :weight bold)))
-
-
-(setq org-capture-templates
-      (quote (("t" "todo" entry (file org-default-notes-file)
-	       "* TODO %?\n" :clock-in t :clock-resume t))))
-
-;; refile handling
-(setq org-refile-use-outline-path nil)
-(setq org-refile-targets '((org-agenda-files :maxlevel . 8)))
-
-;; remove clocked tasks with 0:00 duration
-(setq org-clock-out-remove-zero-time-clocks t)
 
 ;; gpg helper funcs
 (defun efs/lookup-password (&rest keys)
