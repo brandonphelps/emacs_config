@@ -34,101 +34,101 @@
 
 (use-package poetry)
 
-;; ;; lua
-;; (use-package cmake-mode)
-;; (use-package lua-mode)
+;; lua
+(use-package cmake-mode)
+(use-package lua-mode)
 
-;; ;; c/c++
+;; c/c++
 
-;; (defun my-c-mode-hook ()
-;;   (setq c-basic-offset 2)
-;;   (setq indent-tabs-mode t)
-;;   (setq tab-width 2))
+(defun my-c-mode-hook ()
+  (setq c-basic-offset 2)
+  (setq indent-tabs-mode t)
+  (setq tab-width 2))
 
-;; (add-hook 'c-mode-hook 'my-c-mode-hook)
-;; (add-hook 'c++-mode-hook 'my-c-mode-hook)
-
-
-;; ;;; Rust related items. 
-
-;; (use-package rust-mode)
-;; (add-hook 'rust-mode-hook
-;; 	  (lambda () (setq indent-tabs-mode nil)))
+(add-hook 'c-mode-hook 'my-c-mode-hook)
+(add-hook 'c++-mode-hook 'my-c-mode-hook)
 
 
-;; (use-package cargo)
+;;; Rust related items. 
+
+(use-package rust-mode)
+(add-hook 'rust-mode-hook
+	  (lambda () (setq indent-tabs-mode nil)))
 
 
-;; ;;; lsp mode
-;; (defun efs/lsp-mode-setup ()
-;;   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-;;   (lsp-headerline-breadcrumb-mode))
-
-;; (use-package lsp-mode
-;;   :commands (lsp lsp-deferred)
-;;   :init
-;;   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-;;   :hook ((rust-mode . lsp)
-;; 	 (lsp-mode . efs/lsp-mode-setup)
-;; 	 )
-;;   :config
-;;     (lsp-enable-which-key-integration t))
-
-;; (use-package lsp-ui)
-
-;; ;; lsp auto completion stuff. 
-
-;; (use-package company
-;;   :after lsp-mode
-;;   :hook (lsp-mode . company-mode)
-;;   :custom
-;;   (company-minimum-prefix-length 3)
-;;   (company-idle-delay 0.2))
+(use-package cargo)
 
 
-;; ;; not certain if this works or not. 
-;; (use-package dap-mode
-;;   :ensure
-;;   :config
-;;   (dap-ui-mode)
-;;   (dap-ui-controls-mode 1)
-;;   (require 'dap-lldb)
-;;   (require 'dap-gdb-lldb)
-;;   ;; installs 
-;;   (dap-gdb-lldb-setup)
-;;   (dap-register-debug-template
-;;    "Rust::LLDB Run Configuration"
-;;    (list :type "lldb"
-;; 	 :request "launch"
-;; 	 :name "LLDB::Run"
-;; 	 :gdbpath "rust-lldb"
-;; 	 :target nil
-;; 	 :cwd nil)))
+;;; lsp mode
+(defun efs/lsp-mode-setup ()
+  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (lsp-headerline-breadcrumb-mode))
 
-;; ;; (use-package dap-mode)
-;; ;; (require 'dap-gdb-lldb)
-;; ;; (dap-register-debug-template "Rust::GDB Run Configuration"
-;; ;;                              (list :type "gdb"
-;; ;;                                    :request "launch"
-;; ;;                                    :name "GDB::Run"
-;; ;;                            :gdbpath "rust-gdb"
-;; ;;                                    :target nil
-;; ;;                                    :cwd nil))
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+  :hook ((rust-mode . lsp)
+	 (lsp-mode . efs/lsp-mode-setup)
+	 )
+  :config
+    (lsp-enable-which-key-integration t))
+
+(use-package lsp-ui)
+
+;; lsp auto completion stuff. 
+
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :custom
+  (company-minimum-prefix-length 3)
+  (company-idle-delay 0.2))
 
 
+;; not certain if this works or not. 
+(use-package dap-mode
+  :ensure
+  :config
+  (dap-ui-mode)
+  (dap-ui-controls-mode 1)
+  (require 'dap-lldb)
+  (require 'dap-gdb-lldb)
+  ;; installs 
+  (dap-gdb-lldb-setup)
+  (dap-register-debug-template
+   "Rust::LLDB Run Configuration"
+   (list :type "lldb"
+	 :request "launch"
+	 :name "LLDB::Run"
+	 :gdbpath "rust-lldb"
+	 :target nil
+	 :cwd nil)))
 
-;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
-;; (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
+;; (use-package dap-mode)
+;; (require 'dap-gdb-lldb)
+;; (dap-register-debug-template "Rust::GDB Run Configuration"
+;;                              (list :type "gdb"
+;;                                    :request "launch"
+;;                                    :name "GDB::Run"
+;;                            :gdbpath "rust-gdb"
+;;                                    :target nil
+;;                                    :cwd nil))
 
 
 
-;; ;; compliation mode coloring 
-;; (use-package ansi-color)
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 
-;; (defun colorize-compilation-buffer ()
-;;   (toggle-read-only)
-;;   (ansi-color-apply-on-region compilation-filter-start (point))
-;;   (toggle-read-only))
 
-;; (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+;; compliation mode coloring 
+(use-package ansi-color)
+
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region compilation-filter-start (point))
+  (toggle-read-only))
+
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
