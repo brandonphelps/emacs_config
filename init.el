@@ -1,5 +1,3 @@
-
-
 ;; straight bootstrap
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -35,7 +33,6 @@
 
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
-
 
 
 (defvar py_jira-dir (concat user-emacs-directory "py_jira"))
@@ -100,8 +97,6 @@
 (when (display-graphic-p) 
   (use-package doom-themes
     :init (load-theme 'doom-palenight t)))
-
-
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
 ;;   :init (load-theme 'doom-Iosvkem t))
@@ -172,29 +167,6 @@
     (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
   (current-buffer)))
 
-(defun bp/org-mode-setup ()
-  (org-indent-mode))
-
-;; org mode
-(use-package org
-  :hook bp/org-mode-setup
-  :config
-  (setq org-ellipsis " ↓"))
-
-
-(use-package org-roam)
-;; todo move this to box specifics
-(setq org-roam-directory "~/org-roam")
-
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode))
-
-(defvar bp-org-babel-languages
-  '((emacs-lisp . t)
-    (python . t)))
-
-(setq bp-org-babel-languages '((emacs-lisp . t) (python . t)))
 
 (setq backup-directory '(("." . ,(expand-file-name "tmp/backups" user-emacs-directory))))
 

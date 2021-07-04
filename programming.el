@@ -51,11 +51,6 @@
 (use-package cargo)
 
 
-
-;; ob-rust
-(use-package ob-rust)
-;; general items. 
-
 ;;; lsp mode
 (defun efs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
