@@ -17,6 +17,9 @@
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
 (setq custom-file "~/.emacs.d/custom.el")
 
+;; look into this https://gitlab.com/jgkamat/rmsbolt
+
+
 ;; doesn't seem to contain the messages that are added to it. 
 ;; (setq initial-buffer-choice "*bootup-report*")
 ;; bootup report helper functions. 
@@ -32,6 +35,8 @@
 
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
+
+
 
 (defvar py_jira-dir (concat user-emacs-directory "py_jira"))
 
@@ -56,10 +61,6 @@
 (column-number-mode)
 (global-display-line-numbers-mode t)
 
-(when (file-directory-p "py_jira")
-  (message "loading up py jira")
-  (add-to-list 'load-path "~/.emacs.d/py_jira")
-  (require 'py_jira))
 
 (use-package rainbow-delimiters)
 (use-package no-littering)
@@ -81,16 +82,6 @@
         completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
 
-(use-package cargo)
-
-;; languages
-(use-package cmake-mode)
-(use-package lua-mode)
-(use-package rust-mode)
-
-(add-hook 'rust-mode-hook
-	  (lambda () (setq indent-tabs-mode nil)))
-
 
 ;; git related stuff.
 (use-package magit
@@ -101,83 +92,19 @@
 (use-package forge
   :after magit)
 
-;;; lsp mode
-(defun efs/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-  (lsp-headerline-breadcrumb-mode))
-
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :init
-  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-  :hook ((rust-mode . lsp)
-	 (lsp-mode . efs/lsp-mode-setup)
-	 )
-  :config
-    (lsp-enable-which-key-integration t))
-
-(use-package lsp-ui)
-
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :custom
-  (company-minimum-prefix-length 3)
-  (company-idle-delay 0.4))
-
-(use-package dap-mode
-  :config
-  (dap-ui-mode)
-  (dap-ui-controls-mode 1)
-  (require 'dap-lldb)
-  (require 'dap-gdb-lldb)
-  ;; installs 
-  (dap-gdb-lldb-setup)
-  (dap-register-debug-template
-   "Rust::LLDB Run Configuration"
-   (list :type "lldb"
-	 :request "launch"
-	 :name "LLDB::Run"
-	 :gdbpath "rust-lldb"
-	 :target nil
-	 :cwd nil)))
-
-;; Todo; check if rustup components are installed.
-;; rls needs , rls, rust-src rust-analysis 
-(if (executable-find "clangd")
-    (bootup/message "Successfully found clangd")
-  (bootup/message "Failed to find clangd"))
-
-;; Rust handling. 
-(if (executable-find "rustup")
-    (progn
-      (use-package rust-mode)
-      (use-package ob-rust)
-      (bootup/message "Succesfully found rustup"))
-  ;;(setq components (shell-command-to-string "rustup component list")))
-  (bootup/message "Failed to find rustup"))
-
-(if (executable-find "cargo")
-    (bootup/message "Succesfully found cargo")
-  (bootup/message "Failed to find cargo"))
-
-(if (executable-find "python")
-    (bootup/message "Succesfully found python")
-  (bootup/message "Failed to find python"))
-
+(use-package ivy)
 
 
 ;; todo: how to check this only for if emacs is launched with gui.
-(if (display-graphic-p)
-    (use-package doom-themes
-      :straight t
-      :init (load-theme 'doom-palenight t)))
+;; UI layout stuff. 
+(when (display-graphic-p) 
+  (use-package doom-themes
+    :init (load-theme 'doom-palenight t)))
 
 
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
 ;;   :init (load-theme 'doom-Iosvkem t))
-
 
 (use-package projectile
   :diminish
@@ -218,13 +145,6 @@
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 
-(defun my-c-mode-hook ()
-  (setq c-basic-offset 2)
-  (setq indent-tabs-mode t)
-  (setq tab-width 2))
-
-(add-hook 'c-mode-hook 'my-c-mode-hook)
-(add-hook 'c++-mode-hook 'my-c-mode-hook)
 ;; mail server stuff
 (setq send-mail-function 'smtpmail-send-it
    message-send-mail-function 'smtpmail-send-it
@@ -276,9 +196,7 @@
 
 (setq bp-org-babel-languages '((emacs-lisp . t) (python . t)))
 
-
 (setq backup-directory '(("." . ,(expand-file-name "tmp/backups" user-emacs-directory))))
-
 
 (defun rscript ()
   (interactive)
@@ -305,5 +223,7 @@
       nil)))
 
 
-
-
+(when (file-directory-p "py_jira")
+  (message "loading up py jira")
+  (add-to-list 'load-path "~/.emacs.d/py_jira")
+  (require 'py_jira))
