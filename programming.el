@@ -102,6 +102,30 @@
 	 :target nil
 	 :cwd nil)))
 
+(use-package exec-path-from-shell
+  :ensure
+  :init (exec-path-from-shell-initialize))
+
+
+(use-package dap-mode
+  :ensure
+  :config
+  (dap-ui-mode)
+  (dap-ui-controls-mode 1)
+
+  (require 'dap-lldb)
+  (require 'dap-gdb-lldb)
+  ;; installs .extension/vscode
+  (dap-gdb-lldb-setup)
+  (dap-register-debug-template
+   "Rust::GDB Run Configuration"
+   (list :type "gdb"
+         :request "launch"
+         :name "LLDB::Run"
+	 :gdbpath "rust-gdb"
+         :target nil
+         :cwd nil)))
+
 ;; (use-package dap-mode)
 ;; (require 'dap-gdb-lldb)
 ;; (dap-register-debug-template "Rust::GDB Run Configuration"

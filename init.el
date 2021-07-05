@@ -15,8 +15,6 @@
   "Settings file for the box we are currently on")
 
 
-
-
 (defvar py_jira-dir (concat user-emacs-directory "py_jira"))
 
 (when (file-directory-p py_jira-dir)
@@ -53,6 +51,7 @@
 (use-package doom-themes)
 (load-theme 'doom-palenight t)
 
+(use-package yafolding)
 
 ;; basic UI setup. 
 (scroll-bar-mode -1)
