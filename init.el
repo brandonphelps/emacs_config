@@ -29,14 +29,6 @@
 (load-file (concat user-emacs-directory "programming.el"))
 (load-file (concat user-emacs-directory "agenda.el"))
 
-(defvar py_jira-dir (concat user-emacs-directory "py_jira"))
-
-(when (file-directory-p py_jira-dir)
-  (add-to-list 'load-path "~/.emacs.d/py_jira")
-  (require 'py_jira))
-
-
-
 (setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
@@ -44,18 +36,17 @@
 
 
 ;; basic UI setup. 
-(scroll-bar-mode -1)
+(when (display-graphic-p)
+ (scroll-bar-mode -1)
+ (set-fringe-mode 10)
+ )
 (tool-bar-mode -1)
 (tooltip-mode -1)
-(set-fringe-mode 10)
+
 (menu-bar-mode -1)
 (column-number-mode)
 (global-display-line-numbers-mode t)
 (setq ring-bell-function 'ignore)
-
-(column-number-mode)
-(global-display-line-numbers-mode t)
-
 
 (use-package rainbow-delimiters)
 (use-package no-littering)
@@ -64,6 +55,7 @@
 ;; hmm load user specifics customizations late or early? 
 (when (file-readable-p machine-settings-file)
   (load-file machine-settings-file))
+
 
 (use-package vertico
   :init
@@ -147,22 +139,13 @@
 
 
     
-;; ;; todo: make this less os specific or something.
-;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
 
-;; ;; should be conditional on machine
-;; (setq org-directory "~/AppData/Roaming/agenda")
-;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
 
 ;; gpg helper funcs
 (defun efs/lookup-password (&rest keys)
-  (let ((result (apply #'auth-source-search keys)))
-    (if result
+ (let ((result (apply #'auth-source-search keys)))
+   (if result
 	(funcall (plist-get (car result) :secret))
-      nil)))
+     nil)))
 
 
-(when (file-directory-p "py_jira")
-  (message "loading up py jira")
-  (add-to-list 'load-path "~/.emacs.d/py_jira")
-  (require 'py_jira))
