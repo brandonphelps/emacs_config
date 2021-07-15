@@ -20,6 +20,8 @@
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
 (setq custom-file "~/.emacs.d/custom.el")
 
+(if (executable-find "pianobar")
+    (use-package pianobar))
 
 
 (defvar machine-settings-file

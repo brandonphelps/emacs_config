@@ -72,7 +72,7 @@
   :config
     (lsp-enable-which-key-integration t))
 
-(use-package lsp-ui)
+;; (use-package lsp-ui)
 
 ;; lsp auto completion stuff. 
 
@@ -81,7 +81,7 @@
   :hook (lsp-mode . company-mode)
   :custom
   (company-minimum-prefix-length 3)
-  (company-idle-delay 0.2))
+  (company-idle-delay 0.5))
 
 (use-package exec-path-from-shell
   :ensure
@@ -137,3 +137,5 @@
 
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
+(use-package lsp-origami)
+(add-hook 'lsp-after-open-hook #'lsp-origami-try-enable)
