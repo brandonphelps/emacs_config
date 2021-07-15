@@ -147,15 +147,6 @@
   (interactive)
   (message (shell-command-to-string (concat "rust-script.exe " (buffer-file-name)))))
 
-
-    
-;; ;; todo: make this less os specific or something.
-;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
-
-;; ;; should be conditional on machine
-;; (setq org-directory "~/AppData/Roaming/agenda")
-;; (setq org-default-notes-file "~/AppData/Roaming/agenda/refile.org")
-
 ;; gpg helper funcs
 (defun efs/lookup-password (&rest keys)
   (let ((result (apply #'auth-source-search keys)))

@@ -88,23 +88,23 @@
   :init (exec-path-from-shell-initialize))
 
 ;; not certain if this works or not. 
-(use-package dap-mode
-  :ensure
-  :config
-  (dap-ui-mode)
-  (dap-ui-controls-mode 1)
-  (require 'dap-lldb)
-  (require 'dap-gdb-lldb)
-  ;; installs 
-  (dap-gdb-lldb-setup)
-  (dap-register-debug-template
-   "Rust::LLDB Run Configuration"
-   (list :type "lldb"
-	 :request "launch"
-	 :name "LLDB::Run"
-	 :gdbpath "rust-lldb"
-	 :target nil
-	 :cwd nil)))
+;; (use-package dap-mode
+;;   :ensure
+;;   :config
+;;   (dap-ui-mode)
+;;   (dap-ui-controls-mode 1)
+;;   (require 'dap-lldb)
+;;   (require 'dap-gdb-lldb)
+;;   ;; installs 
+;;   (dap-gdb-lldb-setup)
+;;   (dap-register-debug-template
+;;    "Rust::LLDB Run Configuration"
+;;    (list :type "lldb"
+;; 	 :request "launch"
+;; 	 :name "LLDB::Run"
+;; 	 :gdbpath "rust-lldb"
+;; 	 :target nil
+;; 	 :cwd nil)))
 
 
 ;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
@@ -137,5 +137,5 @@
 
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-(use-package lsp-origami)
-(add-hook 'lsp-after-open-hook #'lsp-origami-try-enable)
+;;(use-package lsp-origami)
+;;(add-hook 'lsp-after-open-hook #'lsp-origami-try-enable)
