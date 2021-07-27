@@ -67,12 +67,13 @@
   :init
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :hook ((rust-mode . lsp)
+	 (python-mode . lsp)
 	 (lsp-mode . efs/lsp-mode-setup)
 	 )
   :config
     (lsp-enable-which-key-integration t))
 
-(use-package lsp-ui)
+;; (use-package lsp-ui)
 
 ;; lsp auto completion stuff. 
 
@@ -81,21 +82,31 @@
   :hook (lsp-mode . company-mode)
   :custom
   (company-minimum-prefix-length 3)
-  (company-idle-delay 0.2))
+  (company-idle-delay 0.5))
 
 (use-package exec-path-from-shell
   :ensure
   :init (exec-path-from-shell-initialize))
 
-;; (use-package dap-mode)
-;; (require 'dap-gdb-lldb)
-;; (dap-register-debug-template "Rust::GDB Run Configuration"
-;;                              (list :type "gdb"
-;;                                    :request "launch"
-;;                                    :name "GDB::Run"
-;;                            :gdbpath "rust-gdb"
-;;                                    :target nil
-;;                                    :cwd nil))
+;; not certain if this works or not. 
+;; (use-package dap-mode
+;;   :ensure
+;;   :config
+;;   (dap-ui-mode)
+;;   (dap-ui-controls-mode 1)
+;;   (require 'dap-lldb)
+;;   (require 'dap-gdb-lldb)
+;;   ;; installs 
+;;   (dap-gdb-lldb-setup)
+;;   (dap-register-debug-template
+;;    "Rust::LLDB Run Configuration"
+;;    (list :type "lldb"
+;; 	 :request "launch"
+;; 	 :name "LLDB::Run"
+;; 	 :gdbpath "rust-lldb"
+;; 	 :target nil
+;; 	 :cwd nil)))
+
 
 ;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 ;; (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
@@ -112,3 +123,20 @@
 
 ;; (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
+
+
+
+;; compliation mode coloring 
+(use-package ansi-color)
+
+(defun colorize-compilation-buffer ()
+  (toggle-read-only)
+  (ansi-color-apply-on-region compilation-filter-start (point))
+  (toggle-read-only))
+
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+;;(use-package lsp-origami)
+;;(add-hook 'lsp-after-open-hook #'lsp-origami-try-enable)

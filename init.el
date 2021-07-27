@@ -20,14 +20,14 @@
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
 (setq custom-file "~/.emacs.d/custom.el")
 
+(if (executable-find "pianobar")
+    (use-package pianobar))
 
 
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
 
-(load-file (concat user-emacs-directory "programming.el"))
-(load-file (concat user-emacs-directory "agenda.el"))
 
 (setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
@@ -55,6 +55,9 @@
 ;; hmm load user specifics customizations late or early? 
 (when (file-readable-p machine-settings-file)
   (load-file machine-settings-file))
+
+(load-file (concat user-emacs-directory "programming.el"))
+(load-file (concat user-emacs-directory "agenda.el"))
 
 
 (use-package vertico
@@ -136,10 +139,6 @@
 (defun rscript ()
   (interactive)
   (message (shell-command-to-string (concat "rust-script.exe " (buffer-file-name)))))
-
-
-    
-
 
 ;; gpg helper funcs
 (defun efs/lookup-password (&rest keys)
