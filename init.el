@@ -13,6 +13,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(setq straight-check-for-modifications 'live)
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
@@ -51,6 +52,7 @@
 (use-package rainbow-delimiters)
 (use-package no-littering)
 (use-package yafolding)
+(use-package ag)
 
 ;; hmm load user specifics customizations late or early? 
 (when (file-readable-p machine-settings-file)
