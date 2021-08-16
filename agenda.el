@@ -64,6 +64,10 @@
           '(lambda () (hl-line-mode 1))
           'append)
 
+(defvar ss/org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
+ (todo . " %i %-12:c")
+ (tags . " %i %-12:c")
+ (search . " %i %-12:c")))
 
 (setq bp/notes-custom '("N" "Notes" tags "NOTE"
 	       ((org-agenda-overriding-header "Notes")
@@ -116,6 +120,17 @@
 			    (org-tags-match-list-sublevels t)))
 		))
 	      )))
+;; =======
+;; 	       ((agenda "")
+;; 		(tags "REFILE"
+;; 		      ((org-agenda-overriding-header "Refile")
+;; 		       (org-tags-match-list-sublevels t)
+;; 		       (org-agenda-sorting-strategy
+;; 			'(todo-state-down time-down))
+;; 		       (org-agenda-prefix-format ss/org-agenda-prefix-format))))
+;; 	       )
+;; 	      ))) 
+;; >>>>>>> origin/feature/agenda
 
 ;; remove clocked tasks with 0:00 duration
 (setq org-clock-out-remove-zero-time-clocks t)
