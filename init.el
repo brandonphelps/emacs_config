@@ -62,7 +62,7 @@
 (use-package rainbow-delimiters)
 (use-package no-littering)
 (use-package yafolding)
-
+(use-package yaml-mode)
 
 
 ;; hmm load user specifics customizations late or early? 
