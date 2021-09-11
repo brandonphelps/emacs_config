@@ -61,7 +61,7 @@
 
 (use-package rainbow-delimiters)
 (use-package no-littering)
-(use-package yafolding)
+;(use-package yafolding)
 (use-package yaml-mode)
 
 
@@ -95,6 +95,8 @@
   (message "%s" bp-default-project-path))
 
 (use-package ivy)
+
+
 
 (use-package projectile
   :diminish
