@@ -51,7 +51,7 @@
 
 (setq org-capture-templates
       (quote (("t" "todo" entry (file org-default-notes-file)
-	       "* TODO %?\n" :clock-in t :clock-resume t))))
+	       "* TODO %?\n" :clock-in t :clock-resume f))))
 
 (setq org-refile-targets '((org-agenda-files :maxlevel . 8)))
 
