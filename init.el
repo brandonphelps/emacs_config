@@ -58,8 +58,17 @@
 (column-number-mode)
 (global-display-line-numbers-mode t)
 
+(use-package org-roam
+  :custom
+ (org-roam-directory "~/RoamNotes")
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+	 ("C-c n f" . org-roam-node-find)
+	 ("C-c n i" . org-roam-node-insert))
+  :config
+  (org-roam-setup))
 
 (use-package rainbow-delimiters)
+(use-package ag)
 (use-package no-littering)
 ;(use-package yafolding)
 (use-package yaml-mode)
