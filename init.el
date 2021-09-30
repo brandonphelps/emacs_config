@@ -60,7 +60,8 @@
 
 (use-package org-roam
   :custom
- (org-roam-directory "~/RoamNotes")
+  (org-roam-directory "~/RoamNotes")
+  (org-roam-v2-ack t)
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
 	 ("C-c n i" . org-roam-node-insert))
