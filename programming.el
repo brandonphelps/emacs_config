@@ -70,8 +70,8 @@
 	 (python-mode . lsp)
 	 (lsp-mode . efs/lsp-mode-setup)
 	 )
-  :config
-    (lsp-enable-which-key-integration t))
+)  ;; :config
+  ;;   (lsp-enable-which-key-integration t))
 
 ;; (use-package lsp-ui)
 

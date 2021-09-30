@@ -50,8 +50,12 @@
       '((sequence "TODO(t)" "|" "DONE(d)" "OTHER(o)")))
 
 (setq org-capture-templates
-      (quote (("t" "todo" entry (file org-default-notes-file)
-	       "* TODO %?\n" :clock-in t :clock-resume f))))
+      (quote (
+	      ("t" "todo clock keep" entry (file org-default-notes-file)
+	       "* TODO %?\n" :clock-in t :clock-keep t)
+	      ("f" "todo clock resume" entry (file org-default-notes-file)
+	       "* TODO %?\n" :clock-in t :clock-resume t))))
+
 
 (setq org-refile-targets '((org-agenda-files :maxlevel . 8)))
 

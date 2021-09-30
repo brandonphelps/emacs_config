@@ -49,7 +49,20 @@
 (global-display-line-numbers-mode t)
 (setq ring-bell-function 'ignore)
 
+(use-package org-roam
+  :custom
+  (org-roam-directory "~/roam-notes")
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+	 ("C-c n f" . org-roam-node-find)
+	 ("C-c n i" . org-roam-node-insert))
+  :config
+  (org-roam-setup))
+
+(setq org-roam-v2-ack t)
+
+
 (use-package rainbow-delimiters)
+(use-package ag)
 (use-package no-littering)
 (use-package yaml-mode)
 (use-package ag)
@@ -103,12 +116,12 @@
   ;;     (setq projectile-project-search-path '(bp-default-project-path)))
   (setq projectile-switch-project-action #'projectile-dired))
 
-(projectile-register-project-type
- 'conan '("conanfile.py")
- :project-file "conanfile.py"
- :compile "conan install . -if build -b missing"
- :run "conan build . -bf build"
- )
+;; (projectile-register-project-type
+;;  'conan '("conanfile.py")
+;;  :project-file "conanfile.py"
+;;  :compile "conan install . -if build -b missing"
+;;  :run "conan build . -bf build"
+;;  )
 
 ;; (load-file (concat user-emacs-directory "custom_projectile.el"))
 
