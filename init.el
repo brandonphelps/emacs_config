@@ -13,6 +13,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(setq straight-check-for-modifications 'live)
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
@@ -28,16 +29,6 @@
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
 
-(load-file (concat user-emacs-directory "programming.el"))
-(load-file (concat user-emacs-directory "agenda.el"))
-
-(defvar py_jira-dir (concat user-emacs-directory "py_jira"))
-
-(when (file-directory-p py_jira-dir)
-  (add-to-list 'load-path "~/.emacs.d/py_jira")
-  (require 'py_jira))
-
-
 
 (setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
@@ -46,38 +37,45 @@
 
 
 ;; basic UI setup. 
-(scroll-bar-mode -1)
+(when (display-graphic-p)
+ (scroll-bar-mode -1)
+ (set-fringe-mode 10)
+ )
 (tool-bar-mode -1)
 (tooltip-mode -1)
-(set-fringe-mode 10)
+
 (menu-bar-mode -1)
 (column-number-mode)
 (global-display-line-numbers-mode t)
 (setq ring-bell-function 'ignore)
 
-(column-number-mode)
-(global-display-line-numbers-mode t)
-
 (use-package org-roam
   :custom
-  (org-roam-directory "~/RoamNotes")
   (org-roam-v2-ack t)
+  (org-roam-directory "~/roam-notes")
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
 	 ("C-c n i" . org-roam-node-insert))
   :config
   (org-roam-setup))
 
+(setq org-roam-v2-ack t)
+
+
 (use-package rainbow-delimiters)
 (use-package ag)
 (use-package no-littering)
-;(use-package yafolding)
 (use-package yaml-mode)
+(use-package ag)
 
 
 ;; hmm load user specifics customizations late or early? 
 (when (file-readable-p machine-settings-file)
   (load-file machine-settings-file))
+
+(load-file (concat user-emacs-directory "programming.el"))
+(load-file (concat user-emacs-directory "agenda.el"))
+
 
 (use-package vertico
   :init
@@ -118,6 +116,15 @@
   ;; (when (boundp 'bp-default-project-path)
   ;;     (setq projectile-project-search-path '(bp-default-project-path)))
   (setq projectile-switch-project-action #'projectile-dired))
+
+;; (projectile-register-project-type
+;;  'conan '("conanfile.py")
+;;  :project-file "conanfile.py"
+;;  :compile "conan install . -if build -b missing"
+;;  :run "conan build . -bf build"
+;;  )
+
+;; (load-file (concat user-emacs-directory "custom_projectile.el"))
 
 (use-package helpful)
 
@@ -163,13 +170,9 @@
 
 ;; gpg helper funcs
 (defun efs/lookup-password (&rest keys)
-  (let ((result (apply #'auth-source-search keys)))
-    (if result
+ (let ((result (apply #'auth-source-search keys)))
+   (if result
 	(funcall (plist-get (car result) :secret))
-      nil)))
+     nil)))
 
 
-(when (file-directory-p "py_jira")
-  (message "loading up py jira")
-  (add-to-list 'load-path "~/.emacs.d/py_jira")
-  (require 'py_jira))
