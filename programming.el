@@ -67,6 +67,7 @@
   :init
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :hook ((rust-mode . lsp)
+	 (python-mode . lsp)
 	 (lsp-mode . efs/lsp-mode-setup)
 	 )
 )  ;; :config

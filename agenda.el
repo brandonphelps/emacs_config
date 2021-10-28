@@ -32,6 +32,10 @@
 (global-set-key (kbd "<f12>") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 
+;; refileing
+
+(setq org-reverse-note-order t)
+
 ;; clocking
 (setq org-log-done 'time)
 (setq org-clock-into-drawer nil)
@@ -46,40 +50,91 @@
       '((sequence "TODO(t)" "|" "DONE(d)" "OTHER(o)")))
 
 (setq org-capture-templates
-      (quote (("t" "todo" entry (file org-default-notes-file)
+      (quote (
+	      ("t" "todo clock keep" entry (file org-default-notes-file)
+	       "* TODO %?\n" :clock-in t :clock-keep t)
+	      ("f" "todo clock resume" entry (file org-default-notes-file)
 	       "* TODO %?\n" :clock-in t :clock-resume t))))
+
 
 (setq org-refile-targets '((org-agenda-files :maxlevel . 8)))
 
 ;; refile handling
-(setq org-refile-use-outline-path nil)
-(setq org-outline-path-complete-in-steps nil)
 (setq org-refile-allow-creating-parent-nodes (quote confirm))
+(setq org-refile-use-outline-path 'file
+      org-outline-path-complete-in-steps nil)
+
+(add-hook 'org-agenda-mode-hook
+          '(lambda () (hl-line-mode 1))
+          'append)
 
 (defvar ss/org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
  (todo . " %i %-12:c")
  (tags . " %i %-12:c")
  (search . " %i %-12:c")))
 
-
 (setq bp/notes-custom '("N" "Notes" tags "NOTE"
 	       ((org-agenda-overriding-header "Notes")
 		(org-tags-match-list-sublevels t))))
+
+;; works for tags / todos
+;; (org-agenda-skip-function 'my/org-agenda-skip-func)
+(defun my/org-agenda-skip-func ()
+  (org-agenda-skip-entry-if 'scheduled 'deadline))
 
 (setq org-agenda-custom-commands
       (quote (("N" "Notes" tags "NOTE"
 	       ((org-agenda-overriding-header "Notes")
 		(org-tags-match-list-sublevels t)))
+	      ;; ("I" "items only with timestamps" ((agenda ""))
+	      ;;  ((org-agenda-ndays 1)
+	      ;; 	(org-agenda-show-log nil)
+	      ;; 	(org-agenda-entry-types '(:timestamp))
+	      ;; 	(org-agenda-clockreport-mode t)
+	      ;; 	(org-agenda-include-diary nil)
+	      ;; 	(org-agenda-span 'day)
+	      ;; 	(org-agenda-show-all-dates nil)
+	      ;; 	))
+	      ;; ("i" "only scheduled entries sorted by time" ((agenda ""))
+	      ;;  ((org-agenda-ndays 1)
+	      ;; 	(org-agenda-show-log t)
+	      ;; 	(org-agenda-entry-type '())
+	      ;; 	(org-agenda-clockreport-mode t)
+	      ;; 	(org-agenda-span 'day)
+	      ;; 	))
+	      ("j" "Meetings" tags-todo "MEETING"
+	       ((org-agenda-overriding-header "Meetings")
+		(org-tags-match-list-sublevels t)
+		))
+	      ("Ps" "Product support" tags-todo "PRODUCT_SUPPORT"
+	       ((org-agenda-overriding-header "Product support")
+		(org-tags-match-list-sublevels t)
+		))
 	      (" " "Agenda"
-	       ((agenda "")
+	       ((agenda ""
+			((org-agenda-ndays 1)
+			 (org-agenda-show-log t)
+			 (org-agenda-span 'day)))
 		(tags "REFILE"
 		      ((org-agenda-overriding-header "Refile")
 		       (org-tags-match-list-sublevels t)
-		       (org-agenda-sorting-strategy
-			'(todo-state-down time-down))
-		       (org-agenda-prefix-format ss/org-agenda-prefix-format))))
-	       )
-	      ))) 
+		       ))
+		(tags-todo "-REFILE"
+			   ((org-agenda-overriding-header "TODO")
+			    (org-tags-match-list-sublevels t)))
+		))
+	      )))
+;; =======
+;; 	       ((agenda "")
+;; 		(tags "REFILE"
+;; 		      ((org-agenda-overriding-header "Refile")
+;; 		       (org-tags-match-list-sublevels t)
+;; 		       (org-agenda-sorting-strategy
+;; 			'(todo-state-down time-down))
+;; 		       (org-agenda-prefix-format ss/org-agenda-prefix-format))))
+;; 	       )
+;; 	      ))) 
+;; >>>>>>> origin/feature/agenda
 
 ;; remove clocked tasks with 0:00 duration
 (setq org-clock-out-remove-zero-time-clocks t)
@@ -184,14 +239,23 @@ Late deadlines first, then scheduled, then non-late deadlines"
       (bh/is-scheduled-late date-str)))
 
 (defun bh/is-scheduled-today (date-str)
+  (message "%s" date-str)
   (string-match "Scheduled:" date-str))
 
 (defun bh/is-scheduled-late (date-str)
   (string-match "Sched\.\\(.*\\)x:" date-str))
 
 (setq org-agenda-sorting-strategy
-      '((agenda habit-down time-up user-defined-down priority-down category-keep)
+      '((agenda habit-down time-up priority-down category-keep)
         (todo priority-down category-keep)
         (tags priority-down category-keep)
         (search category-keep)))
+;; (setq org-agenda-sorting-strategy
+;;       '((agenda time-down)
+;; 	(todo priority-down time-down)))
+
+(setq org-agenda-sort-agenda-notime-is-late nil)
+
+
+;;(setq org-clock-history-length 100)
 
