@@ -5,9 +5,11 @@
 ;; org mode
 (use-package org
   :straight nil
-  :hook bp/org-mode-setup
+  :hook (org-indent-mode bp/org-mode-setup)
   :config
   (setq org-ellipsis " ↓"))
+
+
 
 (use-package org-bullets
   :after org
