@@ -60,6 +60,15 @@
   :config
   (org-roam-setup))
 
+(use-package flyspell
+  :defer t
+  :init
+  (progn
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+    (add-hook 'text-mode-hook 'flyspell-mode)))
+    
+
+
 (setq org-roam-v2-act t)
 
 (use-package rainbow-delimiters)
@@ -92,12 +101,13 @@
 
 ;; todo: how to check this only for if emacs is launched with gui.
 ;; UI layout stuff. 
-(when (display-graphic-p) 
+(if (display-graphic-p) 
+    (use-package doom-themes
+      :init (load-theme 'doom-palenight t))
   (use-package doom-themes
-    :init (load-theme 'doom-palenight t)))
-;; (load-theme 'deeper-blue)
-;; (load-theme 'tango-dark)
-;;   :init (load-theme 'doom-Iosvkem t))
+;;    :init (load-theme 'doom-challenger-deep t)))
+    :init (load-theme 'doom-Iosvkem t)))
+
 
 (when (boundp 'bp-default-project-path)
   (message "%s" bp-default-project-path))
