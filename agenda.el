@@ -5,15 +5,8 @@
 ;; org mode
 (use-package org
   :straight nil
-  :hook (org-indent-mode bp/org-mode-setup)
-  :config
-  (setq org-ellipsis " ↓"))
-
-
-
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode))
+  :hook (org-mode . bp/org-mode-setup)
+  )
 
 (defvar bp-org-babel-languages
   '((emacs-lisp . t)

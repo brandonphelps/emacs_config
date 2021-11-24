@@ -60,6 +60,8 @@
   :config
   (org-roam-setup))
 
+(setq org-roam-v2-act t)
+
 (use-package flyspell
   :defer t
   :init
@@ -68,8 +70,6 @@
     (add-hook 'text-mode-hook 'flyspell-mode)))
     
 
-
-(setq org-roam-v2-act t)
 
 (use-package rainbow-delimiters)
 (use-package ag)
@@ -106,7 +106,8 @@
       :init (load-theme 'doom-palenight t))
   (use-package doom-themes
 ;;    :init (load-theme 'doom-challenger-deep t)))
-    :init (load-theme 'doom-Iosvkem t)))
+    :init (load-theme 'tsdh-dark t)))
+;;    :init (load-theme 'doom-Iosvkem t)))  something about this doesn't work well with agenda. 
 
 
 (when (boundp 'bp-default-project-path)
