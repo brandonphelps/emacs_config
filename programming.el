@@ -29,6 +29,13 @@
   :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
+; maybe consider taking in a port? 
+(defun mdbook-serve ()
+  (interactive)
+  (let ((default-directory (concat (projectile-project-root) "docs/")))
+    (format "%s" default-directory)
+    (start-process "mdbook" "*mdbook*" "mdbook" "serve" "-n" "0.0.0.0" "-p" "2323")))
+
 (use-package forge
   :after magit)
 
