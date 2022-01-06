@@ -75,12 +75,14 @@
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :hook ((rust-mode . lsp)
 	 (python-mode . lsp)
+	 (c-mode . lsp)
+	 (c++-mode . lsp)
 	 (lsp-mode . efs/lsp-mode-setup)
 	 )
 )  ;; :config
   ;;   (lsp-enable-which-key-integration t))
 
-;; (use-package lsp-ui)
+(use-package lsp-ui)
 
 ;; lsp auto completion stuff. 
 
