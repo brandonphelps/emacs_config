@@ -128,12 +128,12 @@
   ;;     (setq projectile-project-search-path '(bp-default-project-path)))
   (setq projectile-switch-project-action #'projectile-dired))
 
-(projectile-register-project-type
- 'conan '("conanfile.py")
- :project-file "conanfile.py"
- :compile "conan install . -if build -b missing"
- :run "conan build . -bf build"
- )
+;(projectile-register-project-type
+; 'conan '("conanfile.py" "CMakeLists.txt")
+; :project-file "conanfile.py"
+; :compile "conan install . -if build -b missing"
+; :run "conan build . -bf build"
+; )
 
 ;; (load-file (concat user-emacs-directory "custom_projectile.el"))
 
