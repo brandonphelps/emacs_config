@@ -1,4 +1,5 @@
 
+(require 'tramp)
 
 
 ;; straight bootstrap
