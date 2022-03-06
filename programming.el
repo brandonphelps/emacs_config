@@ -23,6 +23,7 @@
 ;; ;;     (bootup/message "Succesfully found python")
 ;; ;;   (bootup/message "Failed to find python"))
 
+
 ;; git related stuff.
 (use-package magit
   :commands magit-status
@@ -96,6 +97,7 @@
   (dap-ui-controls-mode 1)
   (require 'dap-lldb)
   (require 'dap-gdb-lldb)
+  (require 'dap-cpptools)
   ;; installs 
   (dap-gdb-lldb-setup)
   (dap-register-debug-template
@@ -106,6 +108,8 @@
 	 :gdbpath "rust-lldb"
 	 :target nil
 	 :cwd nil)))
+
+
 
 
 ;; (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
