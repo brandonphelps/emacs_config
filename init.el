@@ -26,6 +26,13 @@
 
 (if (executable-find "pianobar")
     (use-package pianobar))
+;; doesn't seem to contain the messages that are added to it. 
+;; (setq initial-buffer-choice "*bootup-report*")
+;; bootup report helper functions. 
+(defun bootup/message (msg)
+  (with-current-buffer (get-buffer-create "*bootup-report*")
+    (end-of-buffer)
+    (insert (concat msg "\n"))))
 
 
 (defvar machine-settings-file
@@ -93,9 +100,12 @@
 
 ;; todo: how to check this only for if emacs is launched with gui.
 ;; UI layout stuff. 
-(when (display-graphic-p) 
+(if (display-graphic-p)  ;; if part
   (use-package doom-themes
-    :init (load-theme 'doom-palenight t)))
+    :init (load-theme 'doom-palenight t)) ;; then-part
+  (use-package zenburn-theme
+     :init (load-theme 'zenburn t)))
+
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
 ;;   :init (load-theme 'doom-Iosvkem t))
