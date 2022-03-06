@@ -23,6 +23,8 @@
 ;; ;;     (bootup/message "Succesfully found python")
 ;; ;;   (bootup/message "Failed to find python"))
 
+(use-package jinja2-mode)
+
 ;; git related stuff.
 (use-package magit
   :commands magit-status
@@ -140,3 +142,9 @@
 
 ;;(use-package lsp-origami)
 ;;(add-hook 'lsp-after-open-hook #'lsp-origami-try-enable)
+
+
+(use-package request)
+
+
+

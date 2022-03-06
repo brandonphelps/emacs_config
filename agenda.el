@@ -9,6 +9,8 @@
   :config
   (setq org-ellipsis " ↓"))
 
+(use-package ob-rust)
+
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode))
@@ -17,7 +19,7 @@
   '((emacs-lisp . t)
     (python . t)))
 
-(setq bp-org-babel-languages '((emacs-lisp . t) (python . t)))
+(setq bp-org-babel-languages '((emacs-lisp . t) (python . t) (rust . t)))
 
 ;; do we care about babel stuff? 
 (org-babel-do-load-languages

@@ -1,4 +1,7 @@
 
+(require 'tramp)
+
+
 ;; straight bootstrap
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -58,7 +61,6 @@
 
 (use-package org-roam
   :custom
-  (org-roam-v2-ack t)
   (org-roam-directory "~/roam-notes")
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
@@ -66,8 +68,7 @@
   :config
   (org-roam-setup))
 
-(setq org-roam-v2-ack t)
-
+(setq org-roam-v2-act t)
 
 (use-package rainbow-delimiters)
 (use-package ag)
