@@ -1,4 +1,6 @@
 
+(setq-default fill-column 90)
+
 
 
 ;; straight bootstrap
@@ -26,6 +28,7 @@
 (if (executable-find "pianobar")
     (use-package pianobar))
 
+(use-package ripgrep)
 
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
