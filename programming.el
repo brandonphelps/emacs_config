@@ -25,6 +25,7 @@
 
 (use-package jinja2-mode)
 
+
 ;; git related stuff.
 (use-package magit
   :commands magit-status
@@ -135,6 +136,7 @@
 ;; (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
 (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 
 
@@ -156,4 +158,26 @@
 (use-package request)
 
 
+
+;; poetry items
+(defun run-pylint ()
+  (interactive)
+  (projectile-with-default-dir (projectile-acquire-root)
+    (compilation-start "poetry run pylint axis_audit")))
+
+
+(use-package docker-tramp) 
+
+;;(add-to-list 'load-path (expand-file-name "tlc" user-emacs-directory)
+(straight-use-package '(tlc :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc"
+			    :host nil
+			    :branch "master")
+		      )
+
+(use-package tlc
+  :straight t (tlc :type git :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc" :host nil :branch "master")
+  :config ; loads up code after the package is initialized.
+  (add-to-list 'auto-mode-alist '("\\.tlc\\'" . tlc-mode))
+  
+  )
 
