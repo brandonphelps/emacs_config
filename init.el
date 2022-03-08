@@ -27,6 +27,13 @@
 
 (if (executable-find "pianobar")
     (use-package pianobar))
+;; doesn't seem to contain the messages that are added to it. 
+;; (setq initial-buffer-choice "*bootup-report*")
+;; bootup report helper functions. 
+(defun bootup/message (msg)
+  (with-current-buffer (get-buffer-create "*bootup-report*")
+    (end-of-buffer)
+    (insert (concat msg "\n"))))
 
 (use-package ripgrep)
 
@@ -104,6 +111,7 @@
 
 ;; todo: how to check this only for if emacs is launched with gui.
 ;; UI layout stuff. 
+
 (if (display-graphic-p) 
     (use-package doom-themes
       :init (load-theme 'doom-palenight t))
@@ -112,6 +120,9 @@
     :init (load-theme 'tsdh-dark t)))
 ;;    :init (load-theme 'doom-Iosvkem t)))  something about this doesn't work well with agenda. 
 
+;; (load-theme 'deeper-blue)
+;; (load-theme 'tango-dark)
+;;   :init (load-theme 'doom-Iosvkem t))
 
 (when (boundp 'bp-default-project-path)
   (message "%s" bp-default-project-path))
@@ -190,3 +201,4 @@
      nil)))
 
 
+(require 'tramp)
