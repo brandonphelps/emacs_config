@@ -26,6 +26,8 @@
 
 (use-package jinja2-mode)
 
+(use-package ripgrep)
+
 ;; git related stuff.
 (use-package magit
   :commands magit-status
