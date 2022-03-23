@@ -17,6 +17,11 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(defadvice text-scale-increase (around all-buffers (arg) activate)
+  (dolist (buffer (buffer-list))
+    (with-current-buffer buffer
+      ad-do-it)))
+
 (setq straight-check-for-modifications 'live)
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
