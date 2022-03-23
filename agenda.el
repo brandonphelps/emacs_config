@@ -71,6 +71,7 @@
 (setq org-refile-use-outline-path 'file
       org-outline-path-complete-in-steps nil)
 
+;; this generates some warning? 
 (add-hook 'org-agenda-mode-hook
           '(lambda () (hl-line-mode 1))
           'append)

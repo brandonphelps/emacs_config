@@ -59,10 +59,14 @@
 (when (file-exists-p machine-settings-file)
   (load-file machine-settings-file))
 
+
+
+
 (use-package elfeed
   :custom
-  (elfeed-feeds
-   elfeed-my-custom-feeds)
+  (when (boundp elfeed-my-custom-feeds)
+    (elfeed-feeds
+     elfeed-my-custom-feeds))
   (elfeed-sort-order 'ascending)
   )
 
