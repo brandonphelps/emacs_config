@@ -33,8 +33,6 @@
   :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-(use-package git-timemachine)
-
 ; maybe consider taking in a port? 
 (defun mdbook-serve ()
   (interactive)
@@ -44,6 +42,8 @@
 
 (use-package forge
   :after magit)
+
+(use-package git-timemachine)
 
 (use-package poetry)
 
@@ -93,12 +93,24 @@
 
 ;; lsp auto completion stuff. 
 
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
+
+(use-package corfu
   :custom
-  (company-minimum-prefix-length 3)
-  (company-idle-delay 0.5))
+  (corfu-auto t)
+  :init (corfu-global-mode))
+
+;; (use-package kind-icon
+;;   :after corfu
+;;   :custom
+;;   (kind-icon-use-icons t))
+
+
+;; (use-package company
+;;   :after lsp-mode
+;;   :hook (lsp-mode . company-mode)
+;;   :custom
+;;   (company-minimum-prefix-length 3)
+;;   (company-idle-delay 0.5))
 
 (use-package exec-path-from-shell
   :ensure
@@ -132,12 +144,6 @@
 
 
 ;; ;; compliation mode coloring 
-;; (use-package ansi-color)
-
-;; (defun colorize-compilation-buffer ()
-;;   (toggle-read-only)
-;;   (ansi-color-apply-on-region compilation-filter-start (point))
-;;   (toggle-read-only))
 
 ;; (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
@@ -148,12 +154,8 @@
 
 
 ;; compliation mode coloring 
-(use-package ansi-color)
 
-(defun colorize-compilation-buffer ()
-  (toggle-read-only)
-  (ansi-color-apply-on-region compilation-filter-start (point))
-  (toggle-read-only))
+
 
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
@@ -162,6 +164,26 @@
 
 
 (use-package request)
+
+
+(use-package toml-mode)
+(use-package ansi-color)
+
+(defun colorize-compilation ()
+  "Colorize from `compilation-filter-start' to `point'."
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region
+     compilation-filter-start (point))))
+
+(add-hook 'compilation-filter-hook #'colorize-compilation)
+
+(setq compilation-scroll-output t
+      compilation-window-height 20)
+
+
+
+
+
 
 
 

@@ -1,7 +1,14 @@
 
+
 (setq-default fill-column 90)
 
 
+(defun dired-run-at-point ()
+  (interactive)
+  (let ((process (dired-file-name-at-point)))
+    (async-start-process (file-name-base process) process '(lambda (arg)))))
+
+(setq custom-file "~/.emacs.d/custom.el")
 
 ;; straight bootstrap
 (defvar bootstrap-version)
@@ -17,18 +24,17 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(defadvice text-scale-increase (around all-buffers (arg) activate)
-  (dolist (buffer (buffer-list))
-    (with-current-buffer buffer
-      ad-do-it)))
+
+
 
 (setq straight-check-for-modifications 'live)
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
+(require 'tramp)
+
 ;; look into this https://gitlab.com/jgkamat/rmsbolt
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
-(setq custom-file "~/.emacs.d/custom.el")
 
 (if (executable-find "pianobar")
     (use-package pianobar))
@@ -46,14 +52,49 @@
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
 
+
 ; for elfeed.
 ;; https://fasterthanli.me/index.xml
+
+(when (file-exists-p machine-settings-file)
+  (load-file machine-settings-file))
+
+(use-package elfeed
+  :custom
+  (elfeed-feeds
+   elfeed-my-custom-feeds)
+  (elfeed-sort-order 'ascending)
+  )
+
+(defun elfeed-eww-open (&optional use-generic-p)
+  "open with eww"
+  (interactive "P")
+  (let ((entries (elfeed-search-selected)))
+    (cl-loop for entry in entries
+	     do (elfeed-untag entry 'unread)
+	     when (elfeed-entry-link entry)
+	     do (eww-browse-url it))
+    (mapc #'elfeed-search-update-entry entries)
+    (unless (use-region-p) (forward-line))))
+
+(defun elfeed-w3m-open (&optional use-generic-p)
+  "open with w3m"
+  (interactive "P")
+  (let ((entries (elfeed-search-selected)))
+    (cl-loop for entry in entries
+             do (elfeed-untag entry 'unread)
+             when (elfeed-entry-link entry)
+             do (w3m-browse-url it))
+    (mapc #'elfeed-search-update-entry entries)
+    (unless (use-region-p) (forward-line))))
+
+
+(define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
+(define-key elfeed-search-mode-map (kbd "w") 'elfeed-eww-open)
 
 (setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
-
-
 
 ;; basic UI setup. 
 (when (display-graphic-p)
@@ -85,8 +126,6 @@
   (progn
     (add-hook 'prog-mode-hook 'flyspell-prog-mode)
     (add-hook 'text-mode-hook 'flyspell-mode)))
-    
-
 
 (use-package rainbow-delimiters)
 (use-package ag)
@@ -134,9 +173,8 @@
 (when (boundp 'bp-default-project-path)
   (message "%s" bp-default-project-path))
 
+;; maybe we can remove ivy?
 (use-package ivy)
-
-
 
 (use-package projectile
   :diminish
@@ -208,4 +246,20 @@
      nil)))
 
 
-(require 'tramp)
+;; dono bout this posframe something
+;; (defun org-agenda-posframe ()
+;;   "`org-agenda-list' in a posframe. Quit with 'q' as usual."
+;;   (interactive)
+;;   ;; Open org agenda without showing it in the current frame
+;;   (save-window-excursion
+;;     (org-agenda-list))
+;;   ;; Create posframe with the org agenda buffer
+;;   (let ((frame (posframe-show org-agenda-buffer
+;;                               :poshandler 'posframe-poshandler-frame-center
+;;                               :border-width 2
+;;                               :border-color "gray")))
+;;     ;; Focus org agenda frame to be able to use it's shorcuts
+;;     (x-focus-frame frame)
+;;     ;; Bring back the disappeared cursor
+;;     (with-current-buffer org-agenda-buffer
+;;       (setq-local cursor-type 'box))))
