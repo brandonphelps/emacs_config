@@ -64,7 +64,8 @@
 
 (use-package rust-mode)
 (add-hook 'rust-mode-hook
-	  (lambda () (setq indent-tabs-mode nil)))
+	  (lambda () (setq indent-tabs-mode nil)
+	    ))
 
 (use-package cargo)
 
@@ -77,7 +78,7 @@
   :commands (lsp lsp-deferred)
   :init
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-  :hook (;;(rust-mode . lsp)
+  :hook ((rust-mode . lsp)
 	 (python-mode . lsp)
 	 (c-mode . lsp)
 	 (c++-mode . lsp)
@@ -184,3 +185,7 @@
   
   )
 
+
+
+(require 'clang-format)
+;; clang format integration

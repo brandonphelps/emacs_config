@@ -41,6 +41,8 @@
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
 
+; for elfeed.
+;; https://fasterthanli.me/index.xml
 
 (setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
