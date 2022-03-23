@@ -33,6 +33,8 @@
   :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
+(use-package git-timemachine)
+
 ; maybe consider taking in a port? 
 (defun mdbook-serve ()
   (interactive)
@@ -187,5 +189,5 @@
 
 
 
-(require 'clang-format)
+; (require 'clang-format)
 ;; clang format integration
