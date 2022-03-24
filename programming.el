@@ -105,12 +105,12 @@
 ;;   (kind-icon-use-icons t))
 
 
-;; (use-package company
-;;   :after lsp-mode
-;;   :hook (lsp-mode . company-mode)
-;;   :custom
-;;   (company-minimum-prefix-length 3)
-;;   (company-idle-delay 0.5))
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :custom
+  (company-minimum-prefix-length 3)
+  (company-idle-delay 0.5))
 
 (use-package exec-path-from-shell
   :ensure
@@ -157,7 +157,6 @@
 
 
 
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 ;;(use-package lsp-origami)
 ;;(add-hook 'lsp-after-open-hook #'lsp-origami-try-enable)
