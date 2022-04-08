@@ -85,10 +85,18 @@
 ;; lsp auto completion stuff. 
 
 
-(use-package corfu
-  :custom
-  (corfu-auto t)
-  :init (corfu-global-mode))
+;; (use-package corfu
+;;   :custom
+;;   (corfu-auto t)
+;;   :init (corfu-global-mode))
+
+;; (defun corfu-enable-always-in-minibuffer ()
+;;   "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+;;   (unless (or (bound-and-true-p mct--active)
+;; 	      (bound-and-true-p vertico--input))
+;;     (setq-local corfu-auto nil)
+;;     (corfu-mode 1)))
+;; (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
 
 ;; (use-package kind-icon
 ;;   :after corfu
@@ -147,7 +155,7 @@
 
 
 
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
 
 ;;(use-package lsp-origami)
 ;;(add-hook 'lsp-after-open-hook #'lsp-origami-try-enable)
