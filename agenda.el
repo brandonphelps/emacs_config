@@ -5,15 +5,20 @@
 ;; org mode
 (use-package org
   :straight nil
-  :hook bp/org-mode-setup
-  :config
-  (setq org-ellipsis " ↓"))
+  :hook (org-mode . bp/org-mode-setup)
+  )
 
 (use-package ob-rust)
+
+;  :hook bp/org-mode-setup
+;  :config
+;  (setq org-ellipsis " ↓"))
+
 
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode))
+
 
 (defvar bp-org-babel-languages
   '((emacs-lisp . t)
@@ -66,6 +71,7 @@
 (setq org-refile-use-outline-path 'file
       org-outline-path-complete-in-steps nil)
 
+;; this generates some warning? 
 (add-hook 'org-agenda-mode-hook
           '(lambda () (hl-line-mode 1))
           'append)

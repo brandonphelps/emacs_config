@@ -25,7 +25,6 @@
 
 
 (use-package jinja2-mode)
-
 (use-package ripgrep)
 
 ;; git related stuff.
@@ -33,6 +32,13 @@
   :commands magit-status
   :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+; maybe consider taking in a port? 
+(defun mdbook-serve ()
+  (interactive)
+  (let ((default-directory (concat (projectile-project-root) "docs/")))
+    (format "%s" default-directory)
+    (start-process "mdbook" "*mdbook*" "mdbook" "serve" "-n" "0.0.0.0" "-p" "2323")))
 
 (use-package forge
   :after magit)
@@ -60,7 +66,8 @@
 
 (use-package rust-mode)
 (add-hook 'rust-mode-hook
-	  (lambda () (setq indent-tabs-mode nil)))
+	  (lambda () (setq indent-tabs-mode nil)
+	    ))
 
 (use-package cargo)
 
@@ -75,12 +82,14 @@
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :hook ((rust-mode . lsp)
 	 (python-mode . lsp)
+	 (c-mode . lsp)
+	 (c++-mode . lsp)
 	 (lsp-mode . efs/lsp-mode-setup)
 	 )
   :config
   (setq lsp-signature-auto-activate nil))
 
-;; (use-package lsp-ui)
+(use-package lsp-ui)
 
 ;; lsp auto completion stuff. 
 
@@ -104,12 +113,12 @@
 ;;   (kind-icon-use-icons t))
 
 
-;; (use-package company
-;;   :after lsp-mode
-;;   :hook (lsp-mode . company-mode)
-;;   :custom
-;;   (company-minimum-prefix-length 3)
-;;   (company-idle-delay 0.5))
+(use-package company
+  :after lsp-mode
+  :hook (lsp-mode . company-mode)
+  :custom
+  (company-minimum-prefix-length 3)
+  (company-idle-delay 0.5))
 
 (use-package exec-path-from-shell
   :ensure
@@ -147,12 +156,12 @@
 ;; (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
 (setq c-default-style '((c-mode . "linux") (c++-mode . "linux")))
 
 
 
 ;; compliation mode coloring 
-
 
 
 
@@ -185,3 +194,29 @@
 
 
 
+;; poetry items
+(defun run-pylint ()
+  (interactive)
+  (projectile-with-default-dir (projectile-acquire-root)
+    (compilation-start "poetry run pylint axis_audit")))
+
+
+(use-package docker-tramp) 
+
+;;(add-to-list 'load-path (expand-file-name "tlc" user-emacs-directory)
+(straight-use-package '(tlc :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc"
+			    :host nil
+			    :branch "master")
+		      )
+
+(use-package tlc
+  :straight t (tlc :type git :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc" :host nil :branch "master")
+  :config ; loads up code after the package is initialized.
+  (add-to-list 'auto-mode-alist '("\\.tlc\\'" . tlc-mode))
+  
+  )
+
+
+
+; (require 'clang-format)
+;; clang format integration

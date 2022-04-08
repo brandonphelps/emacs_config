@@ -1,6 +1,6 @@
 
 
-
+(setq-default fill-column 90)
 
 
 (defun dired-run-at-point ()
@@ -46,18 +46,27 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
+(use-package ripgrep)
 
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
 
+
+; for elfeed.
+;; https://fasterthanli.me/index.xml
+
 (when (file-exists-p machine-settings-file)
   (load-file machine-settings-file))
 
+
+
+
 (use-package elfeed
   :custom
-  (elfeed-feeds
-   elfeed-my-custom-feeds)
+  (when (boundp elfeed-my-custom-feeds)
+    (elfeed-feeds
+     elfeed-my-custom-feeds))
   (elfeed-sort-order 'ascending)
   )
 
@@ -87,8 +96,6 @@
 (define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
 (define-key elfeed-search-mode-map (kbd "w") 'elfeed-eww-open)
 
-
-
 (setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
@@ -116,6 +123,13 @@
   (org-roam-setup))
 
 (setq org-roam-v2-act t)
+
+(use-package flyspell
+  :defer t
+  :init
+  (progn
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+    (add-hook 'text-mode-hook 'flyspell-mode)))
 
 (use-package rainbow-delimiters)
 (use-package ag)
@@ -147,11 +161,14 @@
 
 ;; todo: how to check this only for if emacs is launched with gui.
 ;; UI layout stuff. 
-(if (display-graphic-p)  ;; if part
+
+(if (display-graphic-p) 
+    (use-package doom-themes
+      :init (load-theme 'doom-palenight t))
   (use-package doom-themes
-    :init (load-theme 'doom-palenight t)) ;; then-part
-  (use-package zenburn-theme
-     :init (load-theme 'zenburn t)))
+;;    :init (load-theme 'doom-challenger-deep t)))
+    :init (load-theme 'tsdh-dark t)))
+;;    :init (load-theme 'doom-Iosvkem t)))  something about this doesn't work well with agenda. 
 
 ;; (load-theme 'deeper-blue)
 ;; (load-theme 'tango-dark)
@@ -160,9 +177,8 @@
 (when (boundp 'bp-default-project-path)
   (message "%s" bp-default-project-path))
 
+;; maybe we can remove ivy?
 (use-package ivy)
-
-
 
 (use-package projectile
   :diminish
@@ -175,12 +191,12 @@
   ;;     (setq projectile-project-search-path '(bp-default-project-path)))
   (setq projectile-switch-project-action #'projectile-dired))
 
-;; (projectile-register-project-type
-;;  'conan '("conanfile.py")
-;;  :project-file "conanfile.py"
-;;  :compile "conan install . -if build -b missing"
-;;  :run "conan build . -bf build"
-;;  )
+;(projectile-register-project-type
+; 'conan '("conanfile.py" "CMakeLists.txt")
+; :project-file "conanfile.py"
+; :compile "conan install . -if build -b missing"
+; :run "conan build . -bf build"
+; )
 
 ;; (load-file (concat user-emacs-directory "custom_projectile.el"))
 
@@ -234,8 +250,6 @@
      nil)))
 
 
-
-
 ;; dono bout this posframe something
 ;; (defun org-agenda-posframe ()
 ;;   "`org-agenda-list' in a posframe. Quit with 'q' as usual."
@@ -253,6 +267,3 @@
 ;;     ;; Bring back the disappeared cursor
 ;;     (with-current-buffer org-agenda-buffer
 ;;       (setq-local cursor-type 'box))))
-
-
-
