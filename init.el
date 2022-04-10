@@ -145,7 +145,7 @@
 
 (use-package consult
   :demand t
-  :bind (("C-s" . consult-line)
+  :bind (;;("C-s" . consult-line)
 	 ("C-M-l" . consult-imenu)
 	 ("C-x b" . consult-buffer)
 	 :map minibuffer-local-map

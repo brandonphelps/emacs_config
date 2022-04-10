@@ -88,7 +88,6 @@
 	 )
   :config
   (setq lsp-signature-auto-activate nil))
-
 (use-package lsp-ui)
 
 ;; lsp auto completion stuff. 
@@ -105,8 +104,6 @@
 ;;     (setq-local corfu-auto nil)
 ;;     (corfu-mode 1)))
 ;; (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
-
-
 
 
 (use-package kind-icon
