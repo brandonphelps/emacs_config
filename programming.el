@@ -93,11 +93,10 @@
 
 ;; lsp auto completion stuff. 
 
-
-;; (use-package corfu
-;;   :custom
-;;   (corfu-auto t)
-;;   :init (corfu-global-mode))
+(use-package corfu
+  :custom
+  (corfu-auto t)
+  :init (corfu-global-mode))
 
 ;; (defun corfu-enable-always-in-minibuffer ()
 ;;   "Enable Corfu in the minibuffer if Vertico/Mct are not active."
@@ -107,18 +106,20 @@
 ;;     (corfu-mode 1)))
 ;; (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
 
-;; (use-package kind-icon
-;;   :after corfu
-;;   :custom
-;;   (kind-icon-use-icons t))
 
 
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
+
+(use-package kind-icon
+  :after corfu
   :custom
-  (company-minimum-prefix-length 3)
-  (company-idle-delay 0.5))
+  (kind-icon-use-icons t))
+
+;; (use-package company
+;;   :after lsp-mode
+;;   :hook (lsp-mode . company-mode)
+;;   :custom
+;;   (company-minimum-prefix-length 3)
+;;   (company-idle-delay 0.5))
 
 (use-package exec-path-from-shell
   :ensure
@@ -200,21 +201,20 @@
   (projectile-with-default-dir (projectile-acquire-root)
     (compilation-start "poetry run pylint axis_audit")))
 
-
 (use-package docker-tramp) 
 
 ;;(add-to-list 'load-path (expand-file-name "tlc" user-emacs-directory)
-(straight-use-package '(tlc :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc"
-			    :host nil
-			    :branch "master")
-		      )
+;; (straight-use-package '(tlc :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc"
+;; 			    :host nil
+;; 			    :branch "master")
+;; 		      )
 
-(use-package tlc
-  :straight t (tlc :type git :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc" :host nil :branch "master")
-  :config ; loads up code after the package is initialized.
-  (add-to-list 'auto-mode-alist '("\\.tlc\\'" . tlc-mode))
+;; (use-package tlc
+;;   :straight t (tlc :type git :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc" :host nil :branch "master")
+;;   :config ; loads up code after the package is initialized.
+;;   (add-to-list 'auto-mode-alist '("\\.tlc\\'" . tlc-mode))
   
-  )
+;;   )
 
 
 

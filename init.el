@@ -53,14 +53,9 @@
   "Settings file for the box we are currently on")
 
 
-; for elfeed.
-;; https://fasterthanli.me/index.xml
 
 (when (file-exists-p machine-settings-file)
   (load-file machine-settings-file))
-
-
-
 
 (use-package elfeed
   :custom
@@ -116,13 +111,14 @@
 (use-package org-roam
   :custom
   (org-roam-directory "~/roam-notes")
+  (org-roam-v2-act t)
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
 	 ("C-c n i" . org-roam-node-insert))
   :config
-  (org-roam-setup))
+  (org-roam-setup)
+  )
 
-(setq org-roam-v2-act t)
 
 (use-package flyspell
   :defer t
@@ -145,6 +141,20 @@
 (load-file (concat user-emacs-directory "programming.el"))
 (load-file (concat user-emacs-directory "agenda.el"))
 
+
+
+(use-package consult
+  :demand t
+  :bind (("C-s" . consult-line)
+	 ("C-M-l" . consult-imenu)
+	 ("C-x b" . consult-buffer)
+	 :map minibuffer-local-map
+	 ("C-r" . consult-history)
+	 )
+  :custom
+  (consult-project-root-function #'projectile-project-root)
+  (completion-in-region-function #'consult-completion-in-region)
+  )
 
 (use-package vertico
   :init
@@ -178,12 +188,12 @@
   (message "%s" bp-default-project-path))
 
 ;; maybe we can remove ivy?
-(use-package ivy)
+
+
 
 (use-package projectile
   :diminish
   :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
   :bind-keymap
   ("C-c p" . projectile-command-map)
   :init
