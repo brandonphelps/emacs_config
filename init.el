@@ -60,8 +60,6 @@
   (load-file machine-settings-file))
 
 
-
-
 (use-package elfeed
   :custom
   (when (boundp elfeed-my-custom-feeds)
@@ -267,3 +265,9 @@
 ;;     ;; Bring back the disappeared cursor
 ;;     (with-current-buffer org-agenda-buffer
 ;;       (setq-local cursor-type 'box))))
+
+
+(if (and (fboundp 'native-comp-available-p)
+       (native-comp-available-p))
+  (message "Native compilation is available")
+(message "Native complation is *not* available"))
