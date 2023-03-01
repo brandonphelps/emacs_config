@@ -1,7 +1,4 @@
-
-
 (setq-default fill-column 90)
-
 
 (defun dired-run-at-point ()
   (interactive)
@@ -9,6 +6,7 @@
     (async-start-process (file-name-base process) process '(lambda (arg)))))
 
 (setq custom-file "~/.emacs.d/custom.el")
+
 
 ;; straight bootstrap
 (defvar bootstrap-version)
@@ -76,19 +74,19 @@
     (mapc #'elfeed-search-update-entry entries)
     (unless (use-region-p) (forward-line))))
 
-(defun elfeed-w3m-open (&optional use-generic-p)
-  "open with w3m"
-  (interactive "P")
-  (let ((entries (elfeed-search-selected)))
-    (cl-loop for entry in entries
-             do (elfeed-untag entry 'unread)
-             when (elfeed-entry-link entry)
-             do (w3m-browse-url it))
-    (mapc #'elfeed-search-update-entry entries)
-    (unless (use-region-p) (forward-line))))
+;; (defun elfeed-w3m-open (&optional use-generic-p)
+;;   "open with w3m"
+;;   (interactive "P")
+;;   (let ((entries (elfeed-search-selected)))
+;;     (cl-loop for entry in entries
+;;              do (elfeed-untag entry 'unread)
+;;              when (elfeed-entry-link entry)
+;;              do (w3m-browse-url it))
+;;     (mapc #'elfeed-search-update-entry entries)
+;;     (unless (use-region-p) (forward-line))))
 
 
-(define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
+;; (define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
 (define-key elfeed-search-mode-map (kbd "w") 'elfeed-eww-open)
 
 (setq inhibit-startup-message t)
@@ -277,3 +275,11 @@
 ;;     ;; Bring back the disappeared cursor
 ;;     (with-current-buffer org-agenda-buffer
 ;;       (setq-local cursor-type 'box))))
+(use-package docker)
+
+
+
+(add-to-list 'tramp-connection-properties
+             (list (regexp-quote "/ssh:aiur:")
+                   "remote-shell" "/usr/bin/bash"))
+
