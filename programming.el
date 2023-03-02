@@ -1,5 +1,3 @@
-
-
 ;; ;; 'health checks'
 ;; ;; under development. 
 ;; ;; (if (executable-find "clangd")

@@ -1,7 +1,6 @@
 
 (setq-default fill-column 90)
 (setq custom-file "~/.emacs.d/custom.el")
-(setq ring-bell-function #'ignore)
 
 (load-file "~/.emacs.d/elpaca-bootstrap.el")
 
@@ -11,43 +10,151 @@
 
 (elpaca-wait)
 
+;; basic UI setup. 
+(setq inhibit-startup-message t)
+(setq inhibit-startup-buffer-menu t)
+(setq inhibit-startup-screen t)
+(setq ring-bell-function #'ignore)
 
+(when (display-graphic-p)
+ (scroll-bar-mode -1)
+ (set-fringe-mode 15)
+ )
+(tool-bar-mode -1)
+(tooltip-mode -1)
+(menu-bar-mode -1)
+
+;; UI Setup
+(if (display-graphic-p) 
+    (use-package doom-themes
+      :init (load-theme 'doom-palenight t))
+  (use-package doom-themes
+    :init (load-theme 'tsdh-dark t)))
+
+
+;; utility packages
+(use-package rainbow-delimiters)
+(use-package no-littering)
+(use-package helpful)
+(use-package which-key
+  :diminish which-key-mode
+  :config
+  (which-key-mode)
+    (setq which-key-idle-delay 1))
+
+
+;; Programming stuff. 
 (use-package rust-mode)
-(use-package lsp-mode)
+(add-hook 'rust-mode-hook
+	  (lambda () (setq indent-tabs-mode nil)
+	    ))
+
 (use-package cargo)
-(use-package magit)
+(use-package ripgrep)
+(use-package yaml-mode)
+(use-package cmake-mode)
+(use-package toml-mode)
 
 
-;; (setq-default fill-column 90)
+;;; lsp mode
+(defun efs/lsp-mode-setup ()
+  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (lsp-headerline-breadcrumb-mode))
+
+(use-package lsp-mode
+  :commands (lsp lsp-deferred)
+  :init
+  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+  :hook ((rust-mode . lsp)
+	 (python-mode . lsp)
+	 (c-mode . lsp)
+	 (c++-mode . lsp)
+	 (lsp-mode . efs/lsp-mode-setup)
+	 )
+  :config
+  (setq lsp-signature-auto-activate nil))
+
+(use-package kind-icon
+  :after corfu
+  :custom
+  (kind-icon-use-icons t))
+
+(use-package corfu
+  :custom
+  (corfu-auto t)
+  :init
+  (global-corfu-mode))
+
+;; c/c++
+(defun my-c-mode-hook ()
+  (setq c-basic-offset 2)
+  (setq indent-tabs-mode t)
+  (setq tab-width 2))
+
+(add-hook 'c-mode-hook 'my-c-mode-hook)
+(add-hook 'c++-mode-hook 'my-c-mode-hook)
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+
+
+
+;; Color handling for compilation
+
+(add-hook 'shell-mode-hook 'ansi-color-comint-mode-on)
+(add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
+
+
+(setq compilation-scroll-output t
+      compilation-window-height 20)
+
+;; Git related
+
+(use-package magit
+  :commands magit-status
+  :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+(use-package git-timemachine)
+(use-package forge
+  :after magit)
+
+;; Projectil setup
+(use-package projectile
+  :diminish
+  :config (projectile-mode)
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; (when (boundp 'bp-default-project-path)
+  ;;     (setq projectile-project-search-path '(bp-default-project-path)))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+;; ;(projectile-register-project-type
+;; ; 'conan '("conanfile.py" "CMakeLists.txt")
+;; ; :project-file "conanfile.py"
+;; ; :compile "conan install . -if build -b missing"
+;; ; :run "conan build . -bf build"
+;; ; )
+
+
+
+;; org roam note taking
+(use-package org-roam
+  :custom
+  (org-roam-directory "~/roam-notes")
+  (org-roam-v2-act t)
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+	 ("C-c n f" . org-roam-node-find)
+	 ("C-c n i" . org-roam-node-insert))
+  :config
+  (org-roam-setup)
+  )
+
+
 
 ;; (defun dired-run-at-point ()
 ;;   (interactive)
 ;;   (let ((process (dired-file-name-at-point)))
 ;;     (async-start-process (file-name-base process) process '(lambda (arg)))))
 
-;; (setq custom-file "~/.emacs.d/custom.el")
-
-
-;; ;; straight bootstrap
-;; (defvar bootstrap-version)
-;; (let ((bootstrap-file
-;;        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-;;       (bootstrap-version 5))
-;;   (unless (file-exists-p bootstrap-file)
-;;     (with-current-buffer
-;;         (url-retrieve-synchronously
-;;          "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-;;          'silent 'inhibit-cookies)
-;;       (goto-char (point-max))
-;;       (eval-print-last-sexp)))
-;;   (load bootstrap-file nil 'nomessage))
-
-
-
-
-;; (setq straight-check-for-modifications 'live)
-;; (straight-use-package 'use-package)
-;; (setq straight-use-package-by-default t)
 
 ;; (require 'tramp)
 
@@ -64,13 +171,10 @@
 ;;     (end-of-buffer)
 ;;     (insert (concat msg "\n"))))
 
-;; (use-package ripgrep)
 
 ;; (defvar machine-settings-file
 ;;   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
 ;;   "Settings file for the box we are currently on")
-
-
 
 ;; (when (file-exists-p machine-settings-file)
 ;;   (load-file machine-settings-file))
@@ -109,34 +213,7 @@
 ;; ;; (define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
 ;; (define-key elfeed-search-mode-map (kbd "w") 'elfeed-eww-open)
 
-;; (setq inhibit-startup-message t)
-;; (setq inhibit-startup-buffer-menu t)
-;; (setq inhibit-startup-screen t)
-
-;; ;; basic UI setup. 
-;; (when (display-graphic-p)
-;;  (scroll-bar-mode -1)
-;;  (set-fringe-mode 10)
-;;  )
-;; (tool-bar-mode -1)
-;; (tooltip-mode -1)
-
-;; (menu-bar-mode -1)
 ;; (column-number-mode)
-;; (global-display-line-numbers-mode t)
-;; (setq ring-bell-function 'ignore)
-
-;; (use-package org-roam
-;;   :custom
-;;   (org-roam-directory "~/roam-notes")
-;;   (org-roam-v2-act t)
-;;   :bind (("C-c n l" . org-roam-buffer-toggle)
-;; 	 ("C-c n f" . org-roam-node-find)
-;; 	 ("C-c n i" . org-roam-node-insert))
-;;   :config
-;;   (org-roam-setup)
-;;   )
-
 
 ;; (use-package flyspell
 ;;   :defer t
@@ -145,11 +222,6 @@
 ;;     (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 ;;     (add-hook 'text-mode-hook 'flyspell-mode)))
 
-;; (use-package rainbow-delimiters)
-;; (use-package ag)
-;; (use-package no-littering)
-;; (use-package yaml-mode)
-;; (use-package ag)
 
 
 ;; ;; hmm load user specifics customizations late or early? 
@@ -190,17 +262,6 @@
 ;; ;; todo: how to check this only for if emacs is launched with gui.
 ;; ;; UI layout stuff. 
 
-;; (if (display-graphic-p) 
-;;     (use-package doom-themes
-;;       :init (load-theme 'doom-palenight t))
-;;   (use-package doom-themes
-;; ;;    :init (load-theme 'doom-challenger-deep t)))
-;;     :init (load-theme 'tsdh-dark t)))
-;; ;;    :init (load-theme 'doom-Iosvkem t)))  something about this doesn't work well with agenda. 
-
-;; ;; (load-theme 'deeper-blue)
-;; ;; (load-theme 'tango-dark)
-;; ;;   :init (load-theme 'doom-Iosvkem t))
 
 ;; (when (boundp 'bp-default-project-path)
 ;;   (message "%s" bp-default-project-path))
@@ -209,32 +270,8 @@
 
 
 
-;; (use-package projectile
-;;   :diminish
-;;   :config (projectile-mode)
-;;   :bind-keymap
-;;   ("C-c p" . projectile-command-map)
-;;   :init
-;;   ;; (when (boundp 'bp-default-project-path)
-;;   ;;     (setq projectile-project-search-path '(bp-default-project-path)))
-;;   (setq projectile-switch-project-action #'projectile-dired))
 
-;; ;(projectile-register-project-type
-;; ; 'conan '("conanfile.py" "CMakeLists.txt")
-;; ; :project-file "conanfile.py"
-;; ; :compile "conan install . -if build -b missing"
-;; ; :run "conan build . -bf build"
-;; ; )
 
-;; ;; (load-file (concat user-emacs-directory "custom_projectile.el"))
-
-;; (use-package helpful)
-
-;; (use-package which-key
-;;   :diminish which-key-mode
-;;   :config
-;;   (which-key-mode)
-;;     (setq which-key-idle-delay 1))
 
 ;; ;; mail server stuff
 ;; (setq send-mail-function 'smtpmail-send-it
