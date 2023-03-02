@@ -173,19 +173,19 @@
 (use-package docker-tramp) 
 
 ;;(add-to-list 'load-path (expand-file-name "tlc" user-emacs-directory)
-(straight-use-package '(tlc :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc"
-			    :host nil
-			    :branch "master")
-		      )
+;; (straight-use-package '(tlc :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc"
+;; 			    :host nil
+;; 			    :branch "master")
+;; 		      )
 
-(use-package tlc
-  :straight t (tlc :type git :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc" :host nil :branch "master")
-  :config ; loads up code after the package is initialized.
-  (add-to-list 'auto-mode-alist '("\\.tlc\\'" . tlc-mode))
+;; (use-package tlc
+;;   :straight t (tlc :type git :repo "git@ssh.dev.azure.com:v3/brandonphelps/tlc/tlc" :host nil :branch "master")
+;;   :config ; loads up code after the package is initialized.
+;;   (add-to-list 'auto-mode-alist '("\\.tlc\\'" . tlc-mode))
   
-  )
+;;   )
 
 
 
-(require 'clang-format)
+(use-package clang-format)
 ;; clang format integration

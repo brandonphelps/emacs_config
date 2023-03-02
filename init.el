@@ -42,6 +42,8 @@
 
 (use-package ripgrep)
 
+(message (downcase system-name))
+
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
@@ -157,6 +159,9 @@
 ; )
 
 ;; (load-file (concat user-emacs-directory "custom_projectile.el"))
+
+(load-file (concat user-emacs-directory "altec.el"))
+(load-file (concat user-emacs-directory "init-jira.el"))
 
 (use-package helpful)
 
