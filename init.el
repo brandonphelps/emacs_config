@@ -135,6 +135,18 @@
 ;; ; )
 
 
+(use-package vertico
+  :init
+  (vertico-mode))
+
+;; Use the `orderless' completion style.
+;; Enable `partial-completion' for files to allow path expansion.
+;; You may prefer to use `initials' instead of `partial-completion'.
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
 
 ;; org roam note taking
 (use-package org-roam
@@ -147,6 +159,17 @@
   :config
   (org-roam-setup)
   )
+
+
+
+(load-file (concat user-emacs-directory "/agenda.el"))
+
+(defvar machine-settings-file
+  (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
+  "Settings file for the box we are currently on")
+
+(when (file-exists-p machine-settings-file)
+  (load-file machine-settings-file))
 
 
 
@@ -172,12 +195,6 @@
 ;;     (insert (concat msg "\n"))))
 
 
-;; (defvar machine-settings-file
-;;   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
-;;   "Settings file for the box we are currently on")
-
-;; (when (file-exists-p machine-settings-file)
-;;   (load-file machine-settings-file))
 
 ;; (use-package elfeed
 ;;   :custom

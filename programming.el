@@ -183,14 +183,6 @@
 (setq compilation-scroll-output t
       compilation-window-height 20)
 
-
-
-
-
-
-
-
-;; poetry items
 (defun run-pylint ()
   (interactive)
   (projectile-with-default-dir (projectile-acquire-root)
