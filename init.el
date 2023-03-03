@@ -24,12 +24,19 @@
 (tooltip-mode -1)
 (menu-bar-mode -1)
 
+;; movement helpers. 
+(global-set-key (kbd "C-c i") 'windmove-up)
+(global-set-key (kbd "C-c k") 'windmove-down)
+(global-set-key (kbd "C-c j") 'windmove-left)
+(global-set-key (kbd "C-c l") 'windmove-right)
+
 ;; UI Setup
 (if (display-graphic-p) 
     (use-package doom-themes
       :init (load-theme 'doom-palenight t))
   (use-package doom-themes
     :init (load-theme 'tsdh-dark t)))
+;; (M-x customize-themes)
 
 
 ;; utility packages
@@ -95,8 +102,6 @@
 (add-hook 'c++-mode-hook 'my-c-mode-hook)
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
-
-
 ;; Color handling for compilation
 
 (add-hook 'shell-mode-hook 'ansi-color-comint-mode-on)
@@ -134,7 +139,6 @@
 ;; ; :run "conan build . -bf build"
 ;; ; )
 
-
 (use-package vertico
   :init
   (vertico-mode))
@@ -160,8 +164,6 @@
   (org-roam-setup)
   )
 
-
-
 (load-file (concat user-emacs-directory "/agenda.el"))
 
 (defvar machine-settings-file
@@ -172,14 +174,17 @@
   (load-file machine-settings-file))
 
 
+;; testing uility stuff.
+
+(use-package ascii-table)
+
+
+
 
 ;; (defun dired-run-at-point ()
 ;;   (interactive)
 ;;   (let ((process (dired-file-name-at-point)))
 ;;     (async-start-process (file-name-base process) process '(lambda (arg)))))
-
-
-;; (require 'tramp)
 
 ;; ;; look into this https://gitlab.com/jgkamat/rmsbolt
 ;; ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
@@ -193,8 +198,6 @@
 ;;   (with-current-buffer (get-buffer-create "*bootup-report*")
 ;;     (end-of-buffer)
 ;;     (insert (concat msg "\n"))))
-
-
 
 ;; (use-package elfeed
 ;;   :custom
@@ -230,8 +233,6 @@
 ;; ;; (define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
 ;; (define-key elfeed-search-mode-map (kbd "w") 'elfeed-eww-open)
 
-;; (column-number-mode)
-
 ;; (use-package flyspell
 ;;   :defer t
 ;;   :init
@@ -240,14 +241,9 @@
 ;;     (add-hook 'text-mode-hook 'flyspell-mode)))
 
 
-
 ;; ;; hmm load user specifics customizations late or early? 
 ;; (when (file-readable-p machine-settings-file)
 ;;   (load-file machine-settings-file))
-
-;; (load-file (concat user-emacs-directory "programming.el"))
-;; (load-file (concat user-emacs-directory "agenda.el"))
-
 
 
 ;; (use-package consult
@@ -263,31 +259,9 @@
 ;;   (completion-in-region-function #'consult-completion-in-region)
 ;;   )
 
-;; (use-package vertico
-;;   :init
-;;   (vertico-mode))
-
-;; ;; Use the `orderless' completion style.
-;; ;; Enable `partial-completion' for files to allow path expansion.
-;; ;; You may prefer to use `initials' instead of `partial-completion'.
-;; (use-package orderless
-;;   :init
-;;   (setq completion-styles '(orderless)
-;;         completion-category-defaults nil
-;;         completion-category-overrides '((file (styles . (partial-completion))))))
-
-;; ;; todo: how to check this only for if emacs is launched with gui.
-;; ;; UI layout stuff. 
-
 
 ;; (when (boundp 'bp-default-project-path)
 ;;   (message "%s" bp-default-project-path))
-
-;; ;; maybe we can remove ivy?
-
-
-
-
 
 
 ;; ;; mail server stuff
@@ -306,17 +280,11 @@
 ;;    starttls-use-gnutls nil)
 
 
-;; ;; (global-set-key (kbd "C-c i") 'windmove-up)
-;; ;; (global-set-key (kbd "C-c k") 'windmove-down)
-;; ;; (global-set-key (kbd "C-c j") 'windmove-left)
-;; ;; (global-set-key (kbd "C-c l") 'windmove-right)
-
 ;; (use-package markdown-mode)
 ;; (defun markdown-html (buffer)
 ;;   (princ (with-current-buffer buffer
 ;;     (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
 ;;   (current-buffer)))
-
 
 ;; (setq backup-directory '(("." . ,(expand-file-name "tmp/backups" user-emacs-directory))))
 
@@ -330,28 +298,6 @@
 ;;    (if result
 ;; 	(funcall (plist-get (car result) :secret))
 ;;      nil)))
-
-
-;; ;; dono bout this posframe something
-;; ;; (defun org-agenda-posframe ()
-;; ;;   "`org-agenda-list' in a posframe. Quit with 'q' as usual."
-;; ;;   (interactive)
-;; ;;   ;; Open org agenda without showing it in the current frame
-;; ;;   (save-window-excursion
-;; ;;     (org-agenda-list))
-;; ;;   ;; Create posframe with the org agenda buffer
-;; ;;   (let ((frame (posframe-show org-agenda-buffer
-;; ;;                               :poshandler 'posframe-poshandler-frame-center
-;; ;;                               :border-width 2
-;; ;;                               :border-color "gray")))
-;; ;;     ;; Focus org agenda frame to be able to use it's shorcuts
-;; ;;     (x-focus-frame frame)
-;; ;;     ;; Bring back the disappeared cursor
-;; ;;     (with-current-buffer org-agenda-buffer
-;; ;;       (setq-local cursor-type 'box))))
-;; (use-package docker)
-
-
 
 ;; (add-to-list 'tramp-connection-properties
 ;;              (list (regexp-quote "/ssh:aiur:")
