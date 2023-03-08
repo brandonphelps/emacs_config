@@ -9,6 +9,9 @@
   (setq elpaca-use-package-by-default t))
 
 (elpaca-wait)
+(use-package org)
+(elpaca-wait)
+
 
 ;; basic UI setup. 
 (setq inhibit-startup-message t)
@@ -153,6 +156,7 @@
         completion-category-overrides '((file (styles . (partial-completion))))))
 
 ;; org roam note taking
+
 (use-package org-roam
   :custom
   (org-roam-directory "~/roam-notes")

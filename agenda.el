@@ -7,19 +7,6 @@
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
 
-;; (defvar bp-org-babel-languages
-;;   '((emacs-lisp . t)
-;;     (python . t)))
-
-;; (setq bp-org-babel-languages '((emacs-lisp . t) (python . t) (rust . t)))
-
-;; ;; do we care about babel stuff? 
-;; (org-babel-do-load-languages
-;;  'org-babel-load-languages bp-org-babel-languages)
-;; (setq org-confirm-babel-evaluate nil)
-;; (add-to-list 'org-structure-template-alist '("py" . "src python"))
-;; (add-to-list 'org-structure-template-alist '("rs" . "src rust"))
-
 ;; agenda stuff
 (global-set-key (kbd "<f12>") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
@@ -103,7 +90,7 @@
 	       ((org-agenda-overriding-header "Product support")
 		(org-tags-match-list-sublevels t)
 		))
-	      ("g" "Agenda"
+	      (" " "Agenda"
 	       ((agenda ""
 			((org-agenda-ndays 1)
 			 (org-agenda-show-log t)
@@ -136,12 +123,6 @@
       '(("TODO" :foreground "red" :weight bold)
 	("DONE" :foreground "forest green" :weight bold)
 	("OTHER" :foreground "forest green" :weight bold)))
-
-
-;; Rust handling. 
-;; (when (and (executable-find "rustup") (executable-find "rust-script"))
-;;   ;; how to only add this once? 
-;;   (push '(rust . t) bp-org-babel-languages))
 
 ;;
 ;; Agenda sorting functions
