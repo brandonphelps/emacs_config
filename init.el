@@ -107,7 +107,7 @@
 
 ;; Color handling for compilation
 
-(add-hook 'shell-mode-hook 'ansi-color-comint-mode-on)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
 
 
