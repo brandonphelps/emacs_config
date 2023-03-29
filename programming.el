@@ -205,5 +205,5 @@
 
 
 
-; (require 'clang-format)
+(require 'clang-format)
 ;; clang format integration

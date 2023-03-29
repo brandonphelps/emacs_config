@@ -17,10 +17,10 @@
 (setq ring-bell-function #'ignore)
 
 (when (display-graphic-p)
- (scroll-bar-mode -1)
- (set-fringe-mode 15)
- )
-(tool-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (set-fringe-mode 15)
+  )
 (tooltip-mode -1)
 (menu-bar-mode -1)
 
@@ -54,7 +54,7 @@
 (use-package yaml-mode)
 (use-package cmake-mode)
 (use-package toml-mode)
-
+(require 'clang-format)
 
 ;;; lsp mode
 (defun efs/lsp-mode-setup ()
@@ -357,3 +357,43 @@
 ;;              (list (regexp-quote "/ssh:aiur:")
 ;;                    "remote-shell" "/usr/bin/bash"))
 
+
+
+
+(defun +short-log (entries)
+  (cl-loop with (current compact)
+           for entry in (reverse entries)
+           for cols = (cadr entry)
+           for info = (aref cols 2)
+           do (when (and (equal (aref cols 1) "update-log")
+                         (not (string-match-p "\\(?:^\\(?:\\(?:Author\\|Merge\\):\\)\\)" info)))
+                (cond
+                 ((string-prefix-p "commit " info)
+                  (let ((start (length "commit ")))
+                    (setf (alist-get 'commit current) (substring info start (+ start 6)))))
+                 ((string-prefix-p "Date: " info)
+                  (let ((ws (split-string (string-trim info) " ")))
+                    (setf ws (cdr ws) ;; pop "Date:"
+                          (alist-get 'date current)
+                          (format "(%s %s %s)" (nth 3 ws) (nth 4 ws) (nth 6 ws)))))
+                 (current ;; on first message line
+                  (let ((copy (copy-tree entry))
+                        (info (thread-last
+                                (string-trim info)
+                                (replace-regexp-in-string "^\* " "")
+                                (replace-regexp-in-string
+                                 "\\([([]?#[[:digit:]]+[])]?\\)"
+                                 (lambda (s) (propertize s 'face 'elpaca-busy)))
+                                (replace-regexp-in-string
+                                 "^.*: " (lambda (s) (propertize s 'face 'elpaca-finished))))))
+                    (setf (aref (cadr copy) 2)
+                          (string-join
+                           (list (propertize (alist-get 'commit current)
+                                             'face 'elpaca-busy)
+                                 info
+                                 (propertize (alist-get 'date current)
+                                             'face '((:foreground "grey"))))
+                           " "))
+                    (push copy compact)
+                    (setq current nil)))))
+           finally return compact))
