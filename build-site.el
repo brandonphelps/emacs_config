@@ -76,9 +76,9 @@ targets and targets."
        (list "org-site:main"
              :recursive nil
              :exclude ".*dir-locals\.el|.*gitignore|*.gitmodules|.*/gtd/.*|.*/dailies/.*"
-             :base-directory "~/roam-notes"
+             :base-directory "~/agenda"
              :publishing-function 'org-html-publish-to-html
-             :publishing-directory "~/public_content"
+             :publishing-directory "~/public_agenda"
              :with-author nil           ;; Don't include author name
              :with-creator t            ;; Include Emacs and Org versions in footer
              :with-toc t                ;; Include a table of contents

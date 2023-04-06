@@ -59,11 +59,25 @@
 	  (lambda () (setq indent-tabs-mode nil)
 	    ))
 
+(elpaca-wait)
+
 (use-package cargo)
 (use-package ripgrep)
 (use-package yaml-mode)
 (use-package cmake-mode)
 (use-package toml-mode)
+
+(elpaca-wait)
+
+; (use-package ansi-color)
+
+(defun colorize-compilation ()
+  "Colorize from `compilation-filter-start' to `point'."
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region
+     compilation-filter-start (point))))
+
+(add-hook 'compilation-filter-hook #'colorize-compilation)
 
 
 ;;; lsp mode
@@ -176,6 +190,7 @@
   "Settings file for the box we are currently on")
 
 (when (file-exists-p machine-settings-file)
+  (message "Loading machine-settings-file")
   (load-file machine-settings-file))
 
 
@@ -184,7 +199,7 @@
 (use-package ascii-table)
 
 
-
+(require 'clang-format)
 
 ;; (defun dired-run-at-point ()
 ;;   (interactive)
@@ -308,3 +323,17 @@
 ;;              (list (regexp-quote "/ssh:aiur:")
 ;;                    "remote-shell" "/usr/bin/bash"))
 
+(defun decode-hex-string (hex-string)
+  (apply #'concat 
+     (loop for i from 0 to (- (/ (length hex-string) 2) 1) 
+           for hex-byte = (substring hex-string (* 2 i) (* 2 (+ i 1)))
+           collect (format "%c" (string-to-number hex-byte 16)))))
+
+(defun decode-hex-string (hex-string)
+  (let ((res nil))
+    (dotimes (i (/ (length hex-string) 2) (apply #'concat (reverse res)))
+      (let ((hex-byte (substring hex-string (* 2 i) (* 2 (+ i 1)))))
+        (push (format "%c" (string-to-number hex-byte 16)) res)))))
+
+(message "%s" (decode-hex-string "3939303030333434374a00"))
+(message "%s" (decode-hex-string "434144494c41435f46465f46462e46462e46462e4646"))
