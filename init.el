@@ -12,14 +12,6 @@
 (use-package org)
 (elpaca-wait)
 
-
-<<<<<<< HEAD
-
-
-(setq straight-check-for-modifications 'live)
-(straight-use-package 'use-package)
-(setq straight-use-package-by-default t)
-
 (require 'tramp)
 
 ;; look into this https://gitlab.com/jgkamat/rmsbolt
@@ -35,12 +27,9 @@
     (end-of-buffer)
     (insert (concat msg "\n"))))
 
-(use-package ripgrep)
-
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
   "Settings file for the box we are currently on")
-
 
 ; for elfeed.
 ;; https://fasterthanli.me/index.xml
@@ -48,44 +37,7 @@
 (when (file-exists-p machine-settings-file)
   (load-file machine-settings-file))
 
-
-(use-package elfeed
-  :custom
-  (when (boundp elfeed-my-custom-feeds)
-    (elfeed-feeds
-     elfeed-my-custom-feeds))
-  (elfeed-sort-order 'ascending)
-  )
-
-(defun elfeed-eww-open (&optional use-generic-p)
-  "open with eww"
-  (interactive "P")
-  (let ((entries (elfeed-search-selected)))
-    (cl-loop for entry in entries
-	     do (elfeed-untag entry 'unread)
-	     when (elfeed-entry-link entry)
-	     do (eww-browse-url it))
-    (mapc #'elfeed-search-update-entry entries)
-    (unless (use-region-p) (forward-line))))
-
-(defun elfeed-w3m-open (&optional use-generic-p)
-  "open with w3m"
-  (interactive "P")
-  (let ((entries (elfeed-search-selected)))
-    (cl-loop for entry in entries
-             do (elfeed-untag entry 'unread)
-             when (elfeed-entry-link entry)
-             do (w3m-browse-url it))
-    (mapc #'elfeed-search-update-entry entries)
-    (unless (use-region-p) (forward-line))))
-
-
-(define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
-(define-key elfeed-search-mode-map (kbd "w") 'elfeed-eww-open)
-
-=======
 ;; basic UI setup. 
->>>>>>> feature/elpaca
 (setq inhibit-startup-message t)
 (setq inhibit-startup-buffer-menu t)
 (setq inhibit-startup-screen t)
