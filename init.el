@@ -9,6 +9,9 @@
   (setq elpaca-use-package-by-default t))
 
 (elpaca-wait)
+(use-package org)
+(elpaca-wait)
+
 
 ;; basic UI setup. 
 (setq inhibit-startup-message t)
@@ -24,12 +27,19 @@
 (tooltip-mode -1)
 (menu-bar-mode -1)
 
+;; movement helpers. 
+(global-set-key (kbd "C-c i") 'windmove-up)
+(global-set-key (kbd "C-c k") 'windmove-down)
+(global-set-key (kbd "C-c j") 'windmove-left)
+(global-set-key (kbd "C-c l") 'windmove-right)
+
 ;; UI Setup
 (if (display-graphic-p) 
     (use-package doom-themes
       :init (load-theme 'doom-palenight t))
   (use-package doom-themes
     :init (load-theme 'tsdh-dark t)))
+;; (M-x customize-themes)
 
 
 ;; utility packages
@@ -49,12 +59,27 @@
 	  (lambda () (setq indent-tabs-mode nil)
 	    ))
 
+(elpaca-wait)
+
 (use-package cargo)
 (use-package ripgrep)
 (use-package yaml-mode)
 (use-package cmake-mode)
 (use-package toml-mode)
 (require 'clang-format)
+
+(elpaca-wait)
+
+; (use-package ansi-color)
+
+(defun colorize-compilation ()
+  "Colorize from `compilation-filter-start' to `point'."
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region
+     compilation-filter-start (point))))
+
+(add-hook 'compilation-filter-hook #'colorize-compilation)
+
 
 ;;; lsp mode
 (defun efs/lsp-mode-setup ()
@@ -95,11 +120,9 @@
 (add-hook 'c++-mode-hook 'my-c-mode-hook)
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
-
-
 ;; Color handling for compilation
 
-(add-hook 'shell-mode-hook 'ansi-color-comint-mode-on)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-to-list 'comint-output-filter-functions 'ansi-color-process-output)
 
 
@@ -134,7 +157,6 @@
 ;; ; :run "conan build . -bf build"
 ;; ; )
 
-
 (use-package vertico
   :init
   (vertico-mode))
@@ -149,18 +171,18 @@
         completion-category-overrides '((file (styles . (partial-completion))))))
 
 ;; org roam note taking
+
 (use-package org-roam
   :custom
   (org-roam-directory "~/roam-notes")
   (org-roam-v2-act t)
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
+	 ("C-c n c" . org-roam-capture)
 	 ("C-c n i" . org-roam-node-insert))
   :config
   (org-roam-setup)
   )
-
-
 
 (load-file (concat user-emacs-directory "/agenda.el"))
 
@@ -169,17 +191,21 @@
   "Settings file for the box we are currently on")
 
 (when (file-exists-p machine-settings-file)
+  (message "Loading machine-settings-file")
   (load-file machine-settings-file))
 
 
+;; testing uility stuff.
+
+(use-package ascii-table)
+
+
+(require 'clang-format)
 
 ;; (defun dired-run-at-point ()
 ;;   (interactive)
 ;;   (let ((process (dired-file-name-at-point)))
 ;;     (async-start-process (file-name-base process) process '(lambda (arg)))))
-
-
-;; (require 'tramp)
 
 ;; ;; look into this https://gitlab.com/jgkamat/rmsbolt
 ;; ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
@@ -193,8 +219,6 @@
 ;;   (with-current-buffer (get-buffer-create "*bootup-report*")
 ;;     (end-of-buffer)
 ;;     (insert (concat msg "\n"))))
-
-
 
 ;; (use-package elfeed
 ;;   :custom
@@ -230,8 +254,6 @@
 ;; ;; (define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
 ;; (define-key elfeed-search-mode-map (kbd "w") 'elfeed-eww-open)
 
-;; (column-number-mode)
-
 ;; (use-package flyspell
 ;;   :defer t
 ;;   :init
@@ -240,14 +262,9 @@
 ;;     (add-hook 'text-mode-hook 'flyspell-mode)))
 
 
-
 ;; ;; hmm load user specifics customizations late or early? 
 ;; (when (file-readable-p machine-settings-file)
 ;;   (load-file machine-settings-file))
-
-;; (load-file (concat user-emacs-directory "programming.el"))
-;; (load-file (concat user-emacs-directory "agenda.el"))
-
 
 
 ;; (use-package consult
@@ -263,31 +280,9 @@
 ;;   (completion-in-region-function #'consult-completion-in-region)
 ;;   )
 
-;; (use-package vertico
-;;   :init
-;;   (vertico-mode))
-
-;; ;; Use the `orderless' completion style.
-;; ;; Enable `partial-completion' for files to allow path expansion.
-;; ;; You may prefer to use `initials' instead of `partial-completion'.
-;; (use-package orderless
-;;   :init
-;;   (setq completion-styles '(orderless)
-;;         completion-category-defaults nil
-;;         completion-category-overrides '((file (styles . (partial-completion))))))
-
-;; ;; todo: how to check this only for if emacs is launched with gui.
-;; ;; UI layout stuff. 
-
 
 ;; (when (boundp 'bp-default-project-path)
 ;;   (message "%s" bp-default-project-path))
-
-;; ;; maybe we can remove ivy?
-
-
-
-
 
 
 ;; ;; mail server stuff
@@ -306,17 +301,11 @@
 ;;    starttls-use-gnutls nil)
 
 
-;; ;; (global-set-key (kbd "C-c i") 'windmove-up)
-;; ;; (global-set-key (kbd "C-c k") 'windmove-down)
-;; ;; (global-set-key (kbd "C-c j") 'windmove-left)
-;; ;; (global-set-key (kbd "C-c l") 'windmove-right)
-
 ;; (use-package markdown-mode)
 ;; (defun markdown-html (buffer)
 ;;   (princ (with-current-buffer buffer
 ;;     (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
 ;;   (current-buffer)))
-
 
 ;; (setq backup-directory '(("." . ,(expand-file-name "tmp/backups" user-emacs-directory))))
 
@@ -331,69 +320,12 @@
 ;; 	(funcall (plist-get (car result) :secret))
 ;;      nil)))
 
+(defun decode-hex-string (hex-string)
+  (let ((res nil))
+    (dotimes (i (/ (length hex-string) 2) (apply #'concat (reverse res)))
+      (let ((hex-byte (substring hex-string (* 2 i) (* 2 (+ i 1)))))
+        (push (format "%c" (string-to-number hex-byte 16)) res)))))
 
-;; ;; dono bout this posframe something
-;; ;; (defun org-agenda-posframe ()
-;; ;;   "`org-agenda-list' in a posframe. Quit with 'q' as usual."
-;; ;;   (interactive)
-;; ;;   ;; Open org agenda without showing it in the current frame
-;; ;;   (save-window-excursion
-;; ;;     (org-agenda-list))
-;; ;;   ;; Create posframe with the org agenda buffer
-;; ;;   (let ((frame (posframe-show org-agenda-buffer
-;; ;;                               :poshandler 'posframe-poshandler-frame-center
-;; ;;                               :border-width 2
-;; ;;                               :border-color "gray")))
-;; ;;     ;; Focus org agenda frame to be able to use it's shorcuts
-;; ;;     (x-focus-frame frame)
-;; ;;     ;; Bring back the disappeared cursor
-;; ;;     (with-current-buffer org-agenda-buffer
-;; ;;       (setq-local cursor-type 'box))))
-;; (use-package docker)
+(message "%s" (decode-hex-string "3939303030333434374a00"))
+(message "%s" (decode-hex-string "434144494c41435f46465f46462e46462e46462e4646"))
 
-
-
-;; (add-to-list 'tramp-connection-properties
-;;              (list (regexp-quote "/ssh:aiur:")
-;;                    "remote-shell" "/usr/bin/bash"))
-
-
-
-
-(defun +short-log (entries)
-  (cl-loop with (current compact)
-           for entry in (reverse entries)
-           for cols = (cadr entry)
-           for info = (aref cols 2)
-           do (when (and (equal (aref cols 1) "update-log")
-                         (not (string-match-p "\\(?:^\\(?:\\(?:Author\\|Merge\\):\\)\\)" info)))
-                (cond
-                 ((string-prefix-p "commit " info)
-                  (let ((start (length "commit ")))
-                    (setf (alist-get 'commit current) (substring info start (+ start 6)))))
-                 ((string-prefix-p "Date: " info)
-                  (let ((ws (split-string (string-trim info) " ")))
-                    (setf ws (cdr ws) ;; pop "Date:"
-                          (alist-get 'date current)
-                          (format "(%s %s %s)" (nth 3 ws) (nth 4 ws) (nth 6 ws)))))
-                 (current ;; on first message line
-                  (let ((copy (copy-tree entry))
-                        (info (thread-last
-                                (string-trim info)
-                                (replace-regexp-in-string "^\* " "")
-                                (replace-regexp-in-string
-                                 "\\([([]?#[[:digit:]]+[])]?\\)"
-                                 (lambda (s) (propertize s 'face 'elpaca-busy)))
-                                (replace-regexp-in-string
-                                 "^.*: " (lambda (s) (propertize s 'face 'elpaca-finished))))))
-                    (setf (aref (cadr copy) 2)
-                          (string-join
-                           (list (propertize (alist-get 'commit current)
-                                             'face 'elpaca-busy)
-                                 info
-                                 (propertize (alist-get 'date current)
-                                             'face '((:foreground "grey"))))
-                           " "))
-                    (push copy compact)
-                    (setq current nil)))))
-           finally return compact))

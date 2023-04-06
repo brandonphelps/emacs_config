@@ -32,3 +32,4 @@ projectile-bookmarks.eld
 emacs-custom.el
 .lsp-session-v1
 /elpaca/
+/.packages/
