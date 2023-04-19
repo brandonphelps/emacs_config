@@ -1,5 +1,3 @@
-
-
 ;; ;; 'health checks'
 ;; ;; under development. 
 ;; ;; (if (executable-find "clangd")
@@ -42,6 +40,8 @@
 
 (use-package forge
   :after magit)
+
+(use-package git-timemachine)
 
 (use-package poetry)
 
@@ -86,17 +86,35 @@
 	 )
   :config
   (setq lsp-signature-auto-activate nil))
-
 (use-package lsp-ui)
 
 ;; lsp auto completion stuff. 
 
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
+(use-package corfu
   :custom
-  (company-minimum-prefix-length 3)
-  (company-idle-delay 0.5))
+  (corfu-auto t)
+  :init (corfu-global-mode))
+
+;; (defun corfu-enable-always-in-minibuffer ()
+;;   "Enable Corfu in the minibuffer if Vertico/Mct are not active."
+;;   (unless (or (bound-and-true-p mct--active)
+;; 	      (bound-and-true-p vertico--input))
+;;     (setq-local corfu-auto nil)
+;;     (corfu-mode 1)))
+;; (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
+
+
+(use-package kind-icon
+  :after corfu
+  :custom
+  (kind-icon-use-icons t))
+
+;; (use-package company
+;;   :after lsp-mode
+;;   :hook (lsp-mode . company-mode)
+;;   :custom
+;;   (company-minimum-prefix-length 3)
+;;   (company-idle-delay 0.5))
 
 (use-package exec-path-from-shell
   :ensure
@@ -130,12 +148,6 @@
 
 
 ;; ;; compliation mode coloring 
-;; (use-package ansi-color)
-
-;; (defun colorize-compilation-buffer ()
-;;   (toggle-read-only)
-;;   (ansi-color-apply-on-region compilation-filter-start (point))
-;;   (toggle-read-only))
 
 ;; (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
@@ -146,14 +158,9 @@
 
 
 ;; compliation mode coloring 
-(use-package ansi-color)
 
-(defun colorize-compilation-buffer ()
-  (toggle-read-only)
-  (ansi-color-apply-on-region compilation-filter-start (point))
-  (toggle-read-only))
 
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
 
 ;;(use-package lsp-origami)
 ;;(add-hook 'lsp-after-open-hook #'lsp-origami-try-enable)
@@ -162,13 +169,24 @@
 (use-package request)
 
 
+(use-package toml-mode)
+(use-package ansi-color)
 
-;; poetry items
+(defun colorize-compilation ()
+  "Colorize from `compilation-filter-start' to `point'."
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region
+     compilation-filter-start (point))))
+
+(add-hook 'compilation-filter-hook #'colorize-compilation)
+
+(setq compilation-scroll-output t
+      compilation-window-height 20)
+
 (defun run-pylint ()
   (interactive)
   (projectile-with-default-dir (projectile-acquire-root)
     (compilation-start "poetry run pylint axis_audit")))
-
 
 (use-package docker-tramp) 
 

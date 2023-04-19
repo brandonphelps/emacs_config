@@ -2,38 +2,10 @@
 (defun bp/org-mode-setup ()
   (org-indent-mode))
 
-;; org mode
-(use-package org
-  :straight nil
-  :hook (org-mode . bp/org-mode-setup)
-  )
-
-(use-package ob-rust)
-
-;  :hook bp/org-mode-setup
-;  :config
-;  (setq org-ellipsis " ↓"))
-
+;; (use-package org)
 
 (use-package org-bullets
-  :after org
   :hook (org-mode . org-bullets-mode))
-
-
-(defvar bp-org-babel-languages
-  '((emacs-lisp . t)
-    (python . t)))
-
-(setq bp-org-babel-languages '((emacs-lisp . t) (python . t) (rust . t)))
-
-;; do we care about babel stuff? 
-(org-babel-do-load-languages
- 'org-babel-load-languages bp-org-babel-languages)
-
-(setq org-confirm-babel-evaluate nil)
-
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("rs" . "src rust"))
 
 ;; agenda stuff
 (global-set-key (kbd "<f12>") 'org-agenda)
@@ -71,6 +43,7 @@
 (setq org-refile-use-outline-path 'file
       org-outline-path-complete-in-steps nil)
 
+;; this generates some warning? 
 (add-hook 'org-agenda-mode-hook
           '(lambda () (hl-line-mode 1))
           'append)
@@ -150,13 +123,6 @@
       '(("TODO" :foreground "red" :weight bold)
 	("DONE" :foreground "forest green" :weight bold)
 	("OTHER" :foreground "forest green" :weight bold)))
-
-
-;; Rust handling. 
-;; (when (and (executable-find "rustup") (executable-find "rust-script"))
-;;   ;; how to only add this once? 
-;;   (push '(rust . t) bp-org-babel-languages))
-
 
 ;;
 ;; Agenda sorting functions
