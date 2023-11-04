@@ -1,7 +1,5 @@
-
 (setq-default fill-column 90)
 (setq custom-file "~/.emacs.d/custom.el")
-
 (load-file "~/.emacs.d/elpaca-bootstrap.el")
 
 (elpaca elpaca-use-package
@@ -16,6 +14,8 @@
 
 ;; look into this https://gitlab.com/jgkamat/rmsbolt
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
+
+(use-package ellama)
 
 (if (executable-find "pianobar")
     (use-package pianobar))
@@ -92,7 +92,8 @@
 (use-package yaml-mode)
 (use-package cmake-mode)
 (use-package toml-mode)
-(require 'clang-format)
+
+; (use-package clang-format)
 
 (elpaca-wait)
 
@@ -226,7 +227,6 @@
 (use-package ascii-table)
 
 
-(require 'clang-format)
 
 ;; (defun dired-run-at-point ()
 ;;   (interactive)
@@ -350,6 +350,29 @@
       (let ((hex-byte (substring hex-string (* 2 i) (* 2 (+ i 1)))))
         (push (format "%c" (string-to-number hex-byte 16)) res)))))
 
-(message "%s" (decode-hex-string "3939303030333434374a00"))
-(message "%s" (decode-hex-string "434144494c41435f46465f46462e46462e46462e4646"))
+;; (message "%s" (decode-hex-string "3939303030333434374a00"))
+;; (message "%s" (decode-hex-string "434144494c41435f46465f46462e46462e46462e4646"))
 
+(defun ii/decode-jwt (start end &optional jwt)
+  "Decode JWT in region and print to help buffer."
+  (interactive "r")
+  (let* ((tok
+	  (if jwt jwt
+	    (buffer-substring start end)))
+	 (data (s-split "\\." tok))
+	 (header (car data))
+	 (claims (cadr data)))
+    (with-temp-buffer
+      (insert (format "%s\n\n%s"
+		      (base64-decode-string header t)
+		      (base64-decode-string claims t)))
+      (json-pretty-print-buffer)
+      (with-output-to-temp-buffer "*JWT*" (princ (buffer-string)))))
+  t) 
+
+;; this should only happen on on 4k monitor setups or what not. 
+(set-face-attribute 'default nil :height 200)
+
+(use-package mood-line
+  :config
+  (mood-line-mode))
