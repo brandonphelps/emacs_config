@@ -1,4 +1,5 @@
 
+(column-number-mode)
 (setq-default fill-column 90)
 (setq custom-file "~/.emacs.d/custom.el")
 
@@ -13,6 +14,17 @@
 (elpaca-wait)
 
 (require 'tramp)
+
+
+(defun efs/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+	visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . efs/org-mode-visual-fill))
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024))
 
 ;; look into this https://gitlab.com/jgkamat/rmsbolt
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
@@ -58,6 +70,8 @@
 (global-set-key (kbd "C-c j") 'windmove-left)
 (global-set-key (kbd "C-c l") 'windmove-right)
 
+; (use-package rustic)
+
 ;; UI Setup
 (if (display-graphic-p) 
     (use-package doom-themes
@@ -92,11 +106,12 @@
 (use-package yaml-mode)
 (use-package cmake-mode)
 (use-package toml-mode)
-(require 'clang-format)
 
 (elpaca-wait)
 
 ; (use-package ansi-color)
+
+
 
 (defun colorize-compilation ()
   "Colorize from `compilation-filter-start' to `point'."
@@ -108,22 +123,22 @@
 
 
 ;;; lsp mode
-(defun efs/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-  (lsp-headerline-breadcrumb-mode))
+;; (defun efs/lsp-mode-setup ()
+;;   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+;;   (lsp-headerline-breadcrumb-mode))
 
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :init
-  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-  :hook ((rust-mode . lsp)
-	 (python-mode . lsp)
-	 (c-mode . lsp)
-	 (c++-mode . lsp)
-	 (lsp-mode . efs/lsp-mode-setup)
-	 )
-  :config
-  (setq lsp-signature-auto-activate nil))
+;; (use-package lsp-mode
+;;   :commands (lsp lsp-deferred)
+;;   :init
+;;   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+;;   :hook ((rust-mode . lsp)
+;; 	 (python-mode . lsp)
+;; 	 (c-mode . lsp)
+;; 	 (c++-mode . lsp)
+;; 	 (lsp-mode . efs/lsp-mode-setup)
+;; 	 )
+;;   :config
+;;   (setq lsp-signature-auto-activate nil))
 
 (use-package kind-icon
   :after corfu
@@ -162,8 +177,6 @@
   :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 (use-package git-timemachine)
-(use-package forge
-  :after magit)
 
 ;; Projectil setup
 (use-package projectile
@@ -205,7 +218,8 @@
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
 	 ("C-c n c" . org-roam-capture)
-	 ("C-c n i" . org-roam-node-insert))
+	 ("C-c n i" . org-roam-node-insert)
+	 ("C-c n j" . org-roam-dailies-capture-today))
   :config
   (org-roam-setup)
   )
@@ -226,7 +240,7 @@
 (use-package ascii-table)
 
 
-(require 'clang-format)
+; (require 'clang-format)
 
 ;; (defun dired-run-at-point ()
 ;;   (interactive)
@@ -350,6 +364,40 @@
       (let ((hex-byte (substring hex-string (* 2 i) (* 2 (+ i 1)))))
         (push (format "%c" (string-to-number hex-byte 16)) res)))))
 
-(message "%s" (decode-hex-string "3939303030333434374a00"))
-(message "%s" (decode-hex-string "434144494c41435f46465f46462e46462e46462e4646"))
 
+(fset #'jsonrpc--log-event #'ignore)
+(setq eglot-events-buffer-size 0)
+(setq eglot-sync-connect nil)
+
+
+
+
+
+
+;; capture templaes
+
+(setq org-capture-templates
+      '(
+	("j" "Journal Entry"
+	 entry (file+datetree "~/agenda/journal.org")
+	 "* %?"
+	 :empty-lines 1)
+	;; order is important, e must come first. 
+	("e" "Exercise entries")
+	("ee" "Exercise Entry"
+	 entry (file+olp+datetree "~/agenda/journal.org" "Exercise" )
+	 "* %?\n%T")
+	("er" "Run"
+	 entry (file+olp+datetree "~/agenda/journal.org" "Exercise" )
+	 "* Run: %?\n%T")
+	("ep" "Push-ups"
+	 entry (file+olp+datetree "~/agenda/journal.org" "Exercise" )
+	 "* Push-ups: %?\n%T")
+	("es" "Squats"
+	 entry (file+olp+datetree "~/agenda/journal.org" "Exercise" )
+	 "* Squats: %?\n%T")
+	))
+
+
+(custom-set-variables
+ '(org-agenda-files '("~/agenda/journal.org")))
