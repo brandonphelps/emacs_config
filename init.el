@@ -3,6 +3,7 @@
 (setq-default fill-column 90)
 (setq custom-file "~/.emacs.d/custom.el")
 
+
 (load-file "~/.emacs.d/elpaca-bootstrap.el")
 
 (elpaca elpaca-use-package
@@ -172,6 +173,7 @@
 
 ;; Git related
 
+
 (use-package magit
   :commands magit-status
   :custom
@@ -225,6 +227,10 @@
   )
 
 (load-file (concat user-emacs-directory "/agenda.el"))
+
+;; Agenda loading
+
+(setq org-agenda-files (directory-files "~/agenda" t ".org$"))
 
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
@@ -323,20 +329,7 @@
 ;;   (message "%s" bp-default-project-path))
 
 
-;; ;; mail server stuff
-;; (setq send-mail-function 'smtpmail-send-it
-;;    message-send-mail-function 'smtpmail-send-it
-;;    smtpmail-starttls-credentials
-;;    '(("smtp.gmail.com" 587 nil nil))
-;;    smtpmail-auth-credentials
-;;    (expand-file-name "~/.authinfo")
-;;    smtpmail-default-smtp-server "smtp.gmail.com"
-;;    smtpmail-smtp-server "smtp.gmail.com"
-;;    smtpmail-smtp-service 587
-;;    smtpmail-debug-info t
-;;    starttls-extra-arguments nil
-;;    smtpmail-warn-about-unknown-extensions t
-;;    starttls-use-gnutls nil)
+(load-file "~/.gnus")
 
 
 ;; (use-package markdown-mode)
