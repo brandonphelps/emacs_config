@@ -110,9 +110,6 @@
 
 (elpaca-wait)
 
-; (use-package ansi-color)
-
-
 
 (defun colorize-compilation ()
   "Colorize from `compilation-filter-start' to `point'."
@@ -121,25 +118,6 @@
      compilation-filter-start (point))))
 
 (add-hook 'compilation-filter-hook #'colorize-compilation)
-
-
-;;; lsp mode
-;; (defun efs/lsp-mode-setup ()
-;;   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-;;   (lsp-headerline-breadcrumb-mode))
-
-;; (use-package lsp-mode
-;;   :commands (lsp lsp-deferred)
-;;   :init
-;;   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-;;   :hook ((rust-mode . lsp)
-;; 	 (python-mode . lsp)
-;; 	 (c-mode . lsp)
-;; 	 (c++-mode . lsp)
-;; 	 (lsp-mode . efs/lsp-mode-setup)
-;; 	 )
-;;   :config
-;;   (setq lsp-signature-auto-activate nil))
 
 (use-package kind-icon
   :after corfu
@@ -242,29 +220,7 @@
 
 
 ;; testing uility stuff.
-
 (use-package ascii-table)
-
-
-; (require 'clang-format)
-
-;; (defun dired-run-at-point ()
-;;   (interactive)
-
-;;   ;; Open org agenda without showing it in the current frame
-;;   (save-window-excursion
-;;     (org-agenda-list))
-;;   ;; Create posframe with the org agenda buffer
-;;   (let ((frame (posframe-show org-agenda-buffer
-;;                               :poshandler 'posframe-poshandler-frame-center
-;;                               :border-width 2
-;;                               :border-color "gray")))
-;;     ;; Focus org agenda frame to be able to use it's shorcuts
-;;     (x-focus-frame frame)
-;;     ;; Bring back the disappeared cursor
-;;     (with-current-buffer org-agenda-buffer
-;;       (setq-local cursor-type 'box))))
-
 
 (if (and (fboundp 'native-comp-available-p)
        (native-comp-available-p))
@@ -394,3 +350,4 @@
 
 (custom-set-variables
  '(org-agenda-files '("~/agenda/journal.org")))
+(setq eldoc-echo-area-prefer-doc-buffer t)
