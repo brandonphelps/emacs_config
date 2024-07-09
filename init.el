@@ -16,14 +16,6 @@
 
 (require 'tramp)
 
-
-(defun efs/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-	visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(use-package visual-fill-column
-  :hook (org-mode . efs/org-mode-visual-fill))
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024))
 
@@ -191,10 +183,23 @@
 
 ;; org roam note taking
 
+;; (cl-defmethod org-roam-node-type ((node org-roam-node))
+;;   "Return the TYPE of NODE."
+;;   (condition-case nil
+;;       (file-name-nondirectory
+;;        (directory-file-name
+;;         (file-name-directory
+;;          (file-relative-name (org-roam-node-file node) org-roam-directory))))
+;;     (error "")))
+
+(use-package org-journal)
+(use-package ox-hugo)
 (use-package org-roam
   :custom
   (org-roam-directory "~/roam-notes")
   (org-roam-v2-act t)
+  ;; (org-roam-node-display-template 
+  ;;  (concat "${type:15}" " ${title:*} "))
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
 	 ("C-c n c" . org-roam-capture)
@@ -203,6 +208,62 @@
   :config
   (org-roam-setup)
   )
+(setq org-roam-mode-sections
+      (list #'org-roam-backlinks-section
+            #'org-roam-reflinks-section
+            ;; #'org-roam-unlinked-references-section
+            ))
+
+(defun roam-sitemap (title list)
+  (concat "#+OPTIONS: ^:nil author:nil html-postamble:nil\n"
+	  "#+SETUPFILE: ./simple_inline.theme\n"
+	  "#+TITLE: " title "\n\n"
+	  (org-list-to-org list) "\nfile:sitemap.svg"))
+
+(setq my-publish-time 0)
+(defun roam-publication-wrapper (plist filename pubdir)
+  (org-roam-graph)
+  (org-html-publish-to-html plist filename pubdir)
+  (setq my-publish-time (cadr (current-time))))
+
+(setq org-publish-project-alist
+      '(("roam"
+	 :base-directory "~/roam-notes"
+	 :auto-sitemap t
+	 :sitemap-function roam-sitemap
+	 :sitemap-title "Roam notes"
+	 :publishing-function roam-publication-wrapper
+	 :publishing-directory "~/roam-export"
+	 :style "<link rel=\"stylesheet\" href=\"../other/mystyle.cs\" type=\"text/css\">")))
+
+(defun org-roam-custom-link-builder (node)
+  (let ((file (org-roam-node-file node)))
+    (concat (file-name-base file) ".html")))
+
+(setq org-roam-graph-link-builder 'org-roam-custom-link-builder)
+
+(add-hook 'org-roam-graph-generation-hook
+          (lambda (dot svg) (if (< (- (cadr (current-time)) my-publish-time) 5)
+                                (progn (copy-file svg "~/roam-export/sitemap.svg" 't)
+                                       (kill-buffer (file-name-nondirectory svg))
+                                       (setq my-publish-time 0)))))
+
+(use-package org-roam-ui)
+
+(defun publish-garden ()
+  (interactive)
+  (setq org-hugo-base-dir "~/roam-notes/quartz/")
+  (mapc #'jethro/publish (directory-files "~/roam-notes" t ".org$")))
+      
+(setq org-roam-capture-templates
+      '(("m" "main" plain
+	 "%?"
+	 :if-new (file+head "${slug}.org"
+			    "#+title: ${title}\n")
+	 :immediate-finish t
+	 :unnarrowed t)))
+
+
 
 (load-file (concat user-emacs-directory "/agenda.el"))
 
@@ -227,6 +288,16 @@
   (message "Native compilation is available")
 (message "Native complation is *not* available"))
 
+
+
+
+(defun copy-selected-text (start end)
+  (interactive "r")
+    (if (use-region-p)
+        (let ((text (buffer-substring-no-properties start end)))
+            (shell-command (concat "echo '" text "' | clip.exe")))))
+
+
 ;;   (let ((process (dired-file-name-at-point)))
 ;;     (async-start-process (file-name-base process) process '(lambda (arg)))))
 
@@ -243,13 +314,14 @@
 ;;     (end-of-buffer)
 ;;     (insert (concat msg "\n"))))
 
-;; (use-package elfeed
-;;   :custom
-;;   (when (boundp elfeed-my-custom-feeds)
-;;     (elfeed-feeds
-;;      elfeed-my-custom-feeds))
-;;   (elfeed-sort-order 'ascending)
-;;   )
+(use-package elfeed
+  :custom
+  (elfeed-sort-order 'ascending)
+  )
+(use-package elfeed-tube
+  :config
+  (elfeed-tube-setup))
+
 
 ;; ;; (define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
 ;; (define-key elfeed-search-mode-map (kbd "w") 'elfeed-eww-open)
@@ -318,11 +390,6 @@
 (setq eglot-events-buffer-size 0)
 (setq eglot-sync-connect nil)
 
-
-
-
-
-
 ;; capture templaes
 
 (setq org-capture-templates
@@ -348,6 +415,8 @@
 	))
 
 
-(custom-set-variables
- '(org-agenda-files '("~/agenda/journal.org")))
 (setq eldoc-echo-area-prefer-doc-buffer t)
+
+
+
+
