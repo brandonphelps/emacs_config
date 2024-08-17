@@ -1,5 +1,8 @@
+
+(column-number-mode)
 (setq-default fill-column 90)
 (setq custom-file "~/.emacs.d/custom.el")
+
 (load-file "~/.emacs.d/elpaca-bootstrap.el")
 
 (elpaca elpaca-use-package
@@ -11,6 +14,9 @@
 (elpaca-wait)
 
 (require 'tramp)
+
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024))
 
 ;; look into this https://gitlab.com/jgkamat/rmsbolt
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
@@ -58,6 +64,8 @@
 (global-set-key (kbd "C-c j") 'windmove-left)
 (global-set-key (kbd "C-c l") 'windmove-right)
 
+; (use-package rustic)
+
 ;; UI Setup
 (if (display-graphic-p) 
     (use-package doom-themes
@@ -93,11 +101,8 @@
 (use-package cmake-mode)
 (use-package toml-mode)
 
-; (use-package clang-format)
-
 (elpaca-wait)
 
-; (use-package ansi-color)
 
 (defun colorize-compilation ()
   "Colorize from `compilation-filter-start' to `point'."
@@ -106,25 +111,6 @@
      compilation-filter-start (point))))
 
 (add-hook 'compilation-filter-hook #'colorize-compilation)
-
-
-;;; lsp mode
-(defun efs/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-  (lsp-headerline-breadcrumb-mode))
-
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :init
-  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-  :hook ((rust-mode . lsp)
-	 (python-mode . lsp)
-	 (c-mode . lsp)
-	 (c++-mode . lsp)
-	 (lsp-mode . efs/lsp-mode-setup)
-	 )
-  :config
-  (setq lsp-signature-auto-activate nil))
 
 (use-package kind-icon
   :after corfu
@@ -158,13 +144,12 @@
 
 ;; Git related
 
+
 (use-package magit
   :commands magit-status
   :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 (use-package git-timemachine)
-(use-package forge
-  :after magit)
 
 ;; Projectil setup
 (use-package projectile
@@ -199,19 +184,93 @@
 
 ;; org roam note taking
 
+;; (cl-defmethod org-roam-node-type ((node org-roam-node))
+;;   "Return the TYPE of NODE."
+;;   (condition-case nil
+;;       (file-name-nondirectory
+;;        (directory-file-name
+;;         (file-name-directory
+;;          (file-relative-name (org-roam-node-file node) org-roam-directory))))
+;;     (error "")))
+
+(use-package org-journal)
+(use-package ox-hugo)
 (use-package org-roam
   :custom
   (org-roam-directory "~/roam-notes")
   (org-roam-v2-act t)
+  ;; (org-roam-node-display-template 
+  ;;  (concat "${type:15}" " ${title:*} "))
   :bind (("C-c n l" . org-roam-buffer-toggle)
 	 ("C-c n f" . org-roam-node-find)
 	 ("C-c n c" . org-roam-capture)
-	 ("C-c n i" . org-roam-node-insert))
+	 ("C-c n i" . org-roam-node-insert)
+	 ("C-c n j" . org-roam-dailies-capture-today))
   :config
   (org-roam-setup)
   )
+(setq org-roam-mode-sections
+      (list #'org-roam-backlinks-section
+            #'org-roam-reflinks-section
+            ;; #'org-roam-unlinked-references-section
+            ))
+
+(defun roam-sitemap (title list)
+  (concat "#+OPTIONS: ^:nil author:nil html-postamble:nil\n"
+	  "#+SETUPFILE: ./simple_inline.theme\n"
+	  "#+TITLE: " title "\n\n"
+	  (org-list-to-org list) "\nfile:sitemap.svg"))
+
+(setq my-publish-time 0)
+(defun roam-publication-wrapper (plist filename pubdir)
+  (org-roam-graph)
+  (org-html-publish-to-html plist filename pubdir)
+  (setq my-publish-time (cadr (current-time))))
+
+(setq org-publish-project-alist
+      '(("roam"
+	 :base-directory "~/roam-notes"
+	 :auto-sitemap t
+	 :sitemap-function roam-sitemap
+	 :sitemap-title "Roam notes"
+	 :publishing-function roam-publication-wrapper
+	 :publishing-directory "~/roam-export"
+	 :style "<link rel=\"stylesheet\" href=\"../other/mystyle.cs\" type=\"text/css\">")))
+
+(defun org-roam-custom-link-builder (node)
+  (let ((file (org-roam-node-file node)))
+    (concat (file-name-base file) ".html")))
+
+(setq org-roam-graph-link-builder 'org-roam-custom-link-builder)
+
+(add-hook 'org-roam-graph-generation-hook
+          (lambda (dot svg) (if (< (- (cadr (current-time)) my-publish-time) 5)
+                                (progn (copy-file svg "~/roam-export/sitemap.svg" 't)
+                                       (kill-buffer (file-name-nondirectory svg))
+                                       (setq my-publish-time 0)))))
+
+(use-package org-roam-ui)
+
+(defun publish-garden ()
+  (interactive)
+  (setq org-hugo-base-dir "~/roam-notes/quartz/")
+  (mapc #'jethro/publish (directory-files "~/roam-notes" t ".org$")))
+      
+(setq org-roam-capture-templates
+      '(("m" "main" plain
+	 "%?"
+	 :if-new (file+head "${slug}.org"
+			    "#+title: ${title}\n")
+	 :immediate-finish t
+	 :unnarrowed t)))
+
+
 
 (load-file (concat user-emacs-directory "/agenda.el"))
+
+;; Agenda loading
+
+(setq org-agenda-files (directory-files "~/agenda" t ".org$"))
 
 (defvar machine-settings-file
   (concat user-emacs-directory "box-specifics/" (downcase system-name) ".el")
@@ -223,33 +282,22 @@
 
 
 ;; testing uility stuff.
-
 (use-package ascii-table)
-
-
-
-;; (defun dired-run-at-point ()
-;;   (interactive)
-
-;;   ;; Open org agenda without showing it in the current frame
-;;   (save-window-excursion
-;;     (org-agenda-list))
-;;   ;; Create posframe with the org agenda buffer
-;;   (let ((frame (posframe-show org-agenda-buffer
-;;                               :poshandler 'posframe-poshandler-frame-center
-;;                               :border-width 2
-;;                               :border-color "gray")))
-;;     ;; Focus org agenda frame to be able to use it's shorcuts
-;;     (x-focus-frame frame)
-;;     ;; Bring back the disappeared cursor
-;;     (with-current-buffer org-agenda-buffer
-;;       (setq-local cursor-type 'box))))
-
 
 (if (and (fboundp 'native-comp-available-p)
        (native-comp-available-p))
   (message "Native compilation is available")
 (message "Native complation is *not* available"))
+
+
+
+
+(defun copy-selected-text (start end)
+  (interactive "r")
+    (if (use-region-p)
+        (let ((text (buffer-substring-no-properties start end)))
+            (shell-command (concat "echo '" text "' | clip.exe")))))
+
 
 ;;   (let ((process (dired-file-name-at-point)))
 ;;     (async-start-process (file-name-base process) process '(lambda (arg)))))
@@ -267,13 +315,14 @@
 ;;     (end-of-buffer)
 ;;     (insert (concat msg "\n"))))
 
-;; (use-package elfeed
-;;   :custom
-;;   (when (boundp elfeed-my-custom-feeds)
-;;     (elfeed-feeds
-;;      elfeed-my-custom-feeds))
-;;   (elfeed-sort-order 'ascending)
-;;   )
+(use-package elfeed
+  :custom
+  (elfeed-sort-order 'ascending)
+  )
+(use-package elfeed-tube
+  :config
+  (elfeed-tube-setup))
+
 
 ;; ;; (define-key elfeed-search-mode-map (kbd "t") 'elfeed-w3m-open)
 ;; (define-key elfeed-search-mode-map (kbd "w") 'elfeed-eww-open)
@@ -309,20 +358,7 @@
 ;;   (message "%s" bp-default-project-path))
 
 
-;; ;; mail server stuff
-;; (setq send-mail-function 'smtpmail-send-it
-;;    message-send-mail-function 'smtpmail-send-it
-;;    smtpmail-starttls-credentials
-;;    '(("smtp.gmail.com" 587 nil nil))
-;;    smtpmail-auth-credentials
-;;    (expand-file-name "~/.authinfo")
-;;    smtpmail-default-smtp-server "smtp.gmail.com"
-;;    smtpmail-smtp-server "smtp.gmail.com"
-;;    smtpmail-smtp-service 587
-;;    smtpmail-debug-info t
-;;    starttls-extra-arguments nil
-;;    smtpmail-warn-about-unknown-extensions t
-;;    starttls-use-gnutls nil)
+(load-file "~/.gnus")
 
 
 ;; (use-package markdown-mode)
@@ -350,8 +386,40 @@
       (let ((hex-byte (substring hex-string (* 2 i) (* 2 (+ i 1)))))
         (push (format "%c" (string-to-number hex-byte 16)) res)))))
 
-;; (message "%s" (decode-hex-string "3939303030333434374a00"))
-;; (message "%s" (decode-hex-string "434144494c41435f46465f46462e46462e46462e4646"))
+(fset #'jsonrpc--log-event #'ignore)
+(setq eglot-events-buffer-size 0)
+(setq eglot-sync-connect nil)
+
+;; capture templaes
+
+(setq org-capture-templates
+      '(
+	("j" "Journal Entry"
+	 entry (file+datetree "~/agenda/journal.org")
+	 "* %?"
+	 :empty-lines 1)
+	;; order is important, e must come first. 
+	("e" "Exercise entries")
+	("ee" "Exercise Entry"
+	 entry (file+olp+datetree "~/agenda/journal.org" "Exercise" )
+	 "* %?\n%T")
+	("er" "Run"
+	 entry (file+olp+datetree "~/agenda/journal.org" "Exercise" )
+	 "* Run: %?\n%T")
+	("ep" "Push-ups"
+	 entry (file+olp+datetree "~/agenda/journal.org" "Exercise" )
+	 "* Push-ups: %?\n%T")
+	("es" "Squats"
+	 entry (file+olp+datetree "~/agenda/journal.org" "Exercise" )
+	 "* Squats: %?\n%T")
+	))
+
+
+(setq eldoc-echo-area-prefer-doc-buffer t)
+
+
+
+>>>>>>> master
 
 (defun ii/decode-jwt (start end &optional jwt)
   "Decode JWT in region and print to help buffer."
