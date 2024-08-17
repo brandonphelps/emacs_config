@@ -9,9 +9,7 @@
   (elpaca-use-package-mode)
   (setq elpaca-use-package-by-default t))
 
-(elpaca-wait)
 (use-package org)
-(elpaca-wait)
 
 (require 'tramp)
 
@@ -20,8 +18,6 @@
 
 ;; look into this https://gitlab.com/jgkamat/rmsbolt
 ;;; uses configurations from https://github.com/daviwil/emacs-from-scratch
-
-(use-package ellama)
 
 (if (executable-find "pianobar")
     (use-package pianobar))
@@ -101,8 +97,6 @@
 (use-package cmake-mode)
 (use-package toml-mode)
 
-(elpaca-wait)
-
 
 (defun colorize-compilation ()
   "Colorize from `compilation-filter-start' to `point'."
@@ -144,6 +138,8 @@
 
 ;; Git related
 
+
+(use-package transient)
 
 (use-package magit
   :commands magit-status
@@ -266,9 +262,12 @@
 
 
 
+
 (load-file (concat user-emacs-directory "/agenda.el"))
 
 ;; Agenda loading
+
+
 
 (setq org-agenda-files (directory-files "~/agenda" t ".org$"))
 
@@ -358,9 +357,6 @@
 ;;   (message "%s" bp-default-project-path))
 
 
-(load-file "~/.gnus")
-
-
 ;; (use-package markdown-mode)
 ;; (defun markdown-html (buffer)
 ;;   (princ (with-current-buffer buffer
@@ -416,10 +412,6 @@
 
 
 (setq eldoc-echo-area-prefer-doc-buffer t)
-
-
-
->>>>>>> master
 
 (defun ii/decode-jwt (start end &optional jwt)
   "Decode JWT in region and print to help buffer."
